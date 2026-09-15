@@ -6,6 +6,9 @@
   <meta name="theme-color" content="#0f172a" />
   <title>Mujeeb Fleet & Multi-Ledger Manager</title>
   
+  <!-- PWA MANIFEST LINK -->
+  <link rel="manifest" href="/manifest.json">
+  
   <!-- HARDENED CONTENT SECURITY POLICY -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self'; 
@@ -135,6 +138,11 @@
     </header>
 
     <main class="main-container">
+
+      <!-- PWA INSTALL BUTTON (HIDDEN UNTIL READY) -->
+      <button id="btnInstallPWA" class="btn btn-primary" style="display:none; margin-bottom: 12px; background: #059669;">
+        📲 Install App on Device
+      </button>
 
       <!-- ENTRY VIEW -->
       <section id="viewEntry" class="tab-view">
@@ -343,12 +351,47 @@
   <!-- APPLICATION SCRIPT MODULE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { 
-      getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot 
+    import {  
+      getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, enableIndexedDbPersistence 
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { 
+    import {  
       getAuth, signInAnonymously, onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    // SERVICE WORKER REGISTRATION FOR PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(() => console.log('Service Worker Registered successfully'))
+          .catch((err) => console.log('Service Worker registration failed:', err));
+      });
+    }
+
+    // PWA INSTALL PROMPT HANDLER
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('btnInstallPWA');
+      if (installBtn) installBtn.style.display = 'inline-flex';
+    });
+
+    document.getElementById('btnInstallPWA')?.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        showToast('App installed successfully!');
+      }
+      deferredPrompt = null;
+      document.getElementById('btnInstallPWA').style.display = 'none';
+    });
+
+    window.addEventListener('appinstalled', () => {
+      showToast('App installed on device!');
+      const installBtn = document.getElementById('btnInstallPWA');
+      if (installBtn) installBtn.style.display = 'none';
+    });
 
     // STRICT HTML ESCAPING TO PREVENT XSS
     function escapeHTML(str) {
@@ -369,6 +412,12 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    
+    // Enable offline persistence so it syncs across multiple devices seamlessly when back online
+    enableIndexedDbPersistence(db).catch((err) => {
+      console.warn("Persistence cache note: " + err.code);
+    });
+
     const auth = getAuth(app);
 
     let trips = [];
@@ -614,7 +663,6 @@
         tbody.appendChild(tr);
       });
 
-      // BIND DELEGATED ACTIONS SAFELY
       tbody.querySelectorAll('.btn-edit').forEach(btn => {
         btn.addEventListener('click', () => editTrip(btn.getAttribute('data-id')));
       });
@@ -711,7 +759,7 @@
         tr.innerHTML = `
           <td><strong>${escapeHTML(l.name)}</strong></td>
           <td style="font-family:monospace; font-size:0.7rem; color:#64748b;">${escapeHTML(l.id)}</td>
-          <td><button class="action-btn-sm btn-del-ledger" style="background:#ef4444; color:#fff;" data-id="${escapeHTML(l.id)}">Delete</button></li></td>
+          <td><button class="action-btn-sm btn-del-ledger" style="background:#ef4444; color:#fff;" data-id="${escapeHTML(l.id)}">Delete</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -730,7 +778,6 @@
 
     document.getElementById("tripDate").valueAsDate = new Date();
     
-    // Auto Trigger Biometrics on page load
     window.addEventListener("DOMContentLoaded", () => {
       setTimeout(triggerBiometricUnlock, 300);
     });
