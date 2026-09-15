@@ -6,10 +6,8 @@
   <meta name="theme-color" content="#0f172a" />
   <title>Mujeeb Fleet & Multi-Ledger Manager</title>
   
-  <!-- PWA MANIFEST LINK -->
   <link rel="manifest" href="/manifest.json">
   
-  <!-- HARDENED CONTENT SECURITY POLICY -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self'; 
     script-src 'self' 'unsafe-inline' https://www.gstatic.com; 
@@ -64,7 +62,6 @@
     }
     .lock-icon-box svg { width: 44px; height: 44px; fill: #38bdf8; }
 
-    /* HIDE APP UNTIL AUTHENTICATED */
     #appContent { display: none; }
 
     .app-header { background: #0f172a; color: #ffffff; padding: 14px 16px; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-md); display: flex; justify-content: space-between; align-items: center; }
@@ -117,13 +114,13 @@
 </head>
 <body>
 
-  <!-- BIOMETRIC LOCK OVERLAY -->
+  <!-- REAL BIOMETRIC LOCK OVERLAY -->
   <div id="lockOverlay">
     <div class="lock-icon-box" id="btnTouchBiometric">
       <svg viewBox="0 0 24 24"><path d="M17.81 4.42c-1.32-1.03-3.03-1.62-4.81-1.62-1.88 0-3.66.64-5.02 1.76-2.5 2.06-3.8 5.25-3.32 8.32.17 1.11.59 2.19 1.23 3.14l1.32-1.12c-.48-.71-.8-1.52-.92-2.35-.36-2.28.6-4.63 2.45-6.16 1.02-.84 2.36-1.32 3.77-1.32 1.33 0 2.62.44 3.61 1.22 2.18 1.71 3.2 4.43 2.62 7.07-.44 2.01-1.6 3.78-3.25 4.96l1.24 1.2c2.1-1.52 3.58-3.79 4.14-6.36.74-3.36-.57-6.83-3.34-9.02zM12 9c-1.66 0-3 1.34-3 3 0 1.2.7 2.23 1.72 2.71l1.28-1.28C11.39 13.16 11 12.63 11 12c0-.55.45-1 1-1s1 .45 1 1c0 .63-.39 1.16-1 1.43l1.28 1.28C14.3 14.23 15 13.2 15 12c0-1.66-1.34-3-3-3z"/></svg>
     </div>
     <h2 style="font-size: 1.3rem; margin-bottom: 8px;">App Locked</h2>
-    <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 24px;" id="lockMessage">Touch the sensor or button to authenticate</p>
+    <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 24px;" id="lockMessage">Scan your fingerprint or screen lock to enter</p>
     <button class="btn btn-primary" id="btnUnlockBiometric" style="max-width:240px;">Scan Fingerprint</button>
   </div>
 
@@ -138,8 +135,6 @@
     </header>
 
     <main class="main-container">
-
-      <!-- PWA INSTALL BUTTON (HIDDEN UNTIL READY) -->
       <button id="btnInstallPWA" class="btn btn-primary" style="display:none; margin-bottom: 12px; background: #059669;">
         📲 Install App on Device
       </button>
@@ -358,16 +353,12 @@
       getAuth, signInAnonymously, onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    // SERVICE WORKER REGISTRATION FOR PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(() => console.log('Service Worker Registered successfully'))
-          .catch((err) => console.log('Service Worker registration failed:', err));
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
       });
     }
 
-    // PWA INSTALL PROMPT HANDLER
     let deferredPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -380,20 +371,11 @@
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        showToast('App installed successfully!');
-      }
+      if (outcome === 'accepted') showToast('App installed successfully!');
       deferredPrompt = null;
       document.getElementById('btnInstallPWA').style.display = 'none';
     });
 
-    window.addEventListener('appinstalled', () => {
-      showToast('App installed on device!');
-      const installBtn = document.getElementById('btnInstallPWA');
-      if (installBtn) installBtn.style.display = 'none';
-    });
-
-    // STRICT HTML ESCAPING TO PREVENT XSS
     function escapeHTML(str) {
       return String(str ?? '').replace(/[&<>"']/g, match => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -412,12 +394,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    
-    // Enable offline persistence so it syncs across multiple devices seamlessly when back online
-    enableIndexedDbPersistence(db).catch((err) => {
-      console.warn("Persistence cache note: " + err.code);
-    });
-
+    enableIndexedDbPersistence(db).catch(() => {});
     const auth = getAuth(app);
 
     let trips = [];
@@ -430,34 +407,78 @@
     const ledgersCol = collection(db, "ledgers");
     const fleetCol = collection(db, "fleet");
 
-    // HARDENED BIOMETRIC UNLOCK
+    // REAL BIOMETRIC WEBAUTHN AUTHENTICATION HANDLER
     async function triggerBiometricUnlock() {
       const lockMsg = document.getElementById("lockMessage");
       const lockOverlay = document.getElementById("lockOverlay");
       const appContent = document.getElementById("appContent");
 
       try {
-        if (window.PublicKeyCredential) {
-          const challenge = new Uint8Array(32);
-          window.crypto.getRandomValues(challenge);
-          await navigator.credentials.get({
-            publicKey: { challenge, timeout: 60000, userVerification: "preferred" }
-          }).catch(() => null);
+        if (!window.PublicKeyCredential) {
+          throw new Error("WebAuthn not supported on this browser.");
         }
-        
+
+        const challenge = new Uint8Array(32);
+        window.crypto.getRandomValues(challenge);
+        const userId = new Uint8Array(16);
+        window.crypto.getRandomValues(userId);
+
+        const credIdKey = "mujeeb_passkey_credential_id";
+        let existingCredId = localStorage.getItem(credIdKey);
+
+        if (!existingCredId) {
+          lockMsg.innerText = "Registering device fingerprint...";
+          // Step 1: Create a secure hardware-bound passkey registration for this device
+          const newCredential = await navigator.credentials.create({
+            publicKey: {
+              challenge: challenge,
+              rp: { name: "Mujeeb Fleet Manager", id: window.location.hostname },
+              user: {
+                id: userId,
+                name: "mujeeb@fleet.app",
+                displayName: "Mujeeb Fleet Owner"
+              },
+              pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+              authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+              timeout: 60000
+            }
+          });
+
+          // Save credential ID locally so future unlocks recognize it
+          const base64CredId = btoa(String.fromCharCode(...new Uint8Array(newCredential.rawId)));
+          localStorage.setItem(credIdKey, base64CredId);
+        }
+
+        // Step 2: Request biometric verification using the hardware key
+        lockMsg.innerText = "Scan your fingerprint or Face ID";
+        let allowCreds = [];
+        if (existingCredId) {
+          const rawId = Uint8Array.from(atob(existingCredId), c => c.charCodeAt(0));
+          allowCreds = [{ type: "public-key", id: rawId }];
+        }
+
+        await navigator.credentials.get({
+          publicKey: {
+            challenge: challenge,
+            allowCredentials: allowCreds,
+            userVerification: "required",
+            timeout: 60000
+          }
+        });
+
         isAuthenticatedBiometric = true;
         lockOverlay.style.display = "none";
         appContent.style.display = "block";
         initializeDatabaseListeners();
       } catch (err) {
-        lockMsg.innerText = "Authentication failed. Try again.";
+        console.error(err);
+        lockMsg.innerText = "Biometric check failed or cancelled. Tap to retry.";
       }
     }
 
     document.getElementById("btnUnlockBiometric").addEventListener("click", triggerBiometricUnlock);
     document.getElementById("btnTouchBiometric").addEventListener("click", triggerBiometricUnlock);
 
-    // INITIALIZE CLOUD SYNC ONLY AFTER BIOMETRIC PASS
     function initializeDatabaseListeners() {
       if (!isAuthenticatedBiometric) return;
 
@@ -470,7 +491,6 @@
         if (user) {
           syncStatus.innerText = "Live Cloud Active";
           syncStatus.classList.add("active");
-          showToast("Connected Securely");
         } else {
           syncStatus.innerText = "Disconnected";
           syncStatus.classList.remove("active");
@@ -479,9 +499,7 @@
 
       onSnapshot(ledgersCol, (snapshot) => {
         ledgers = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        if (ledgers.length === 0) {
-          addDoc(ledgersCol, { name: "Main General Ledger" });
-        }
+        if (ledgers.length === 0) addDoc(ledgersCol, { name: "Main General Ledger" });
         syncDropdowns();
         renderLedgerMaster();
         renderReports();
@@ -514,7 +532,6 @@
       document.getElementById("nav" + viewName.charAt(0).toUpperCase() + viewName.slice(1)).classList.add("active");
     }
 
-    // UI EVENT BINDINGS
     document.getElementById("navEntry").addEventListener("click", () => switchView("entry"));
     document.getElementById("navReports").addEventListener("click", () => switchView("reports"));
     document.getElementById("navFleet").addEventListener("click", () => switchView("fleet"));
@@ -570,7 +587,6 @@
       if (qty > 0 && sellRate >= 0) document.getElementById("sellVal").value = (qty * sellRate).toFixed(2);
     }
 
-    // STRICT SANITIZATION & WRITE VALIDATION
     document.getElementById("btnSaveTrip").addEventListener("click", async () => {
       const ledgerId = document.getElementById("entryLedger").value;
       const date = document.getElementById("tripDate").value;
@@ -597,7 +613,6 @@
           await addDoc(tripsCol, payload);
           showToast("Saved & Synced.");
         }
-
         resetEntryForm();
         switchView("reports");
       } catch (err) {
@@ -751,6 +766,8 @@
       showToast("New ledger created.");
     });
 
+    functionrenderLedgerMaster();
+
     function renderLedgerMaster() {
       const tbody = document.getElementById("ledgerMasterRows");
       tbody.innerHTML = "";
@@ -777,10 +794,6 @@
     }
 
     document.getElementById("tripDate").valueAsDate = new Date();
-    
-    window.addEventListener("DOMContentLoaded", () => {
-      setTimeout(triggerBiometricUnlock, 300);
-    });
   </script>
 </body>
 </html>
