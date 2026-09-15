@@ -1,15 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest.json",
   "id": "/",
-  "name": "My Progressive Web App",
-  "short_name": "MyPWA",
-  "description": "A fast, installable web application.",
+  "name": "Mujeeb Fleet & Multi-Ledger Manager",
+  "short_name": "Mujeeb Fleet",
+  "description": "A secure, multi-device cloud fleet and multi-ledger management application.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#0f172a",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -30,5 +30,5 @@
       "purpose": "maskable"
     }
   ],
-  "categories": ["utilities", "productivity"]
+  "categories": ["utilities", "productivity", "business"]
 }
