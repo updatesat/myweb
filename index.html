@@ -52,6 +52,7 @@
         body {
             margin: 0;
             padding: 8px;
+            padding-bottom: 70px; /* Space for bottom nav */
             background-color: var(--bg);
             color: var(--text-main);
             font-size: 14px;
@@ -66,14 +67,14 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .main-content, .sidebar {
+        .main-content, .bottom-nav {
             animation: fadeIn 0.2s ease-out forwards;
         }
 
         /* --- TOAST NOTIFICATIONS --- */
         #toastContainer {
             position: fixed;
-            bottom: 16px;
+            bottom: 75px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -210,6 +211,44 @@
             border-radius: 6px;
         }
 
+        /* --- BOTTOM NAVIGATION BAR --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .nav-tab-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 4px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            transition: color 0.15s ease;
+        }
+        .nav-tab-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        .nav-tab-btn.active {
+            color: var(--text-main);
+            background: var(--border);
+        }
+
         /* Workspace Container - Strict Mobile Fit */
         .container {
             max-width: 100%;
@@ -247,20 +286,20 @@
         }
 
         .layout-wrapper {
-            display: grid;
-            grid-template-columns: 260px 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 12px;
-            align-items: start;
+            align-items: stretch;
         }
 
-        .sidebar {
+        .borrower-selector-container {
             background: var(--card-bg);
             padding: 10px;
             border-radius: 6px;
             border: 1px solid var(--border);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 10px;
         }
-        .sidebar h3 {
+        .borrower-selector-container h3 {
             margin-top: 0;
             color: var(--text-muted);
             font-size: 0.7rem;
@@ -270,28 +309,26 @@
         }
         .borrower-selector {
             display: flex;
-            flex-direction: column;
-            gap: 4px;
-            max-height: 280px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-            padding-right: 2px;
+            gap: 6px;
+            overflow-x: auto;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .btn-tab {
             background-color: transparent;
             color: var(--text-main);
-            padding: 8px 10px;
+            padding: 8px 12px;
             border: 1px solid var(--border);
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.9rem;
-            display: grid;
-            grid-template-columns: 1fr auto;
+            display: flex;
             align-items: center;
-            text-align: left;
-            width: 100%;
-            word-break: break-word;
+            gap: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .btn-tab:hover { 
             background-color: var(--border); 
@@ -309,7 +346,6 @@
             font-size: 0.85rem;
             color: var(--danger);
             text-align: right;
-            padding-left: 8px;
             white-space: nowrap;
         }
 
@@ -318,11 +354,12 @@
             border: 1px solid var(--border);
             border-radius: 6px;
             padding: 8px 10px;
-            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .sidebar-totals-box label {
-            display: block;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
         }
@@ -330,7 +367,6 @@
             font-size: 1.05rem;
             font-weight: bold;
             color: var(--danger);
-            margin-top: 2px;
         }
         
         .main-content {
@@ -351,24 +387,6 @@
             transition: opacity 0.15s ease;
         }
         .btn:active { opacity: 0.7; transform: scale(0.98); }
-
-        .btn-nav {
-            background-color: var(--card-bg);
-            color: var(--secondary);
-            text-align: left;
-            padding: 8px 10px;
-            border: 1px solid var(--border);
-            margin-bottom: 4px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-        .btn-nav:hover { background-color: var(--border); color: var(--text-main); }
-        .btn-nav.active {
-            background-color: var(--primary);
-            color: var(--bg);
-            border-color: var(--primary);
-            font-weight: bold;
-        }
         
         .btn-action { background-color: var(--primary); color: var(--bg); border-color: var(--primary); }
         .btn-action:hover { opacity: 0.9; }
@@ -680,9 +698,6 @@
 
         /* --- MOBILE MEDIA QUERIES --- */
         @media (max-width: 900px) {
-            .layout-wrapper {
-                grid-template-columns: 1fr;
-            }
             .dashboard-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -709,6 +724,7 @@
         @media (max-width: 600px) {
             body {
                 padding: 4px;
+                padding-bottom: 70px;
             }
             .container {
                 padding: 8px;
@@ -740,7 +756,7 @@
         }
 
         @media print {
-            #homePageWrapper, .sidebar, form, .filter-bar, .toolbar, .actions-cell, th:last-child, .print-hide, button, .app-title-box, .summary-card, .table-container {
+            #homePageWrapper, .bottom-nav, form, .filter-bar, .toolbar, .actions-cell, th:last-child, .print-hide, button, .app-title-box, .summary-card, .table-container {
                 display: none !important;
             }
             .layout-wrapper { display: block; }
@@ -838,25 +854,17 @@
     </div>
 
     <div class="layout-wrapper">
-        <aside class="sidebar">
-            <h3>Menu</h3>
-            <button class="btn btn-nav active" id="nav-dashboard" style="width: 100%; margin-bottom: 4px;" onclick="switchTab('dashboard')">Dashboard</button>
-            <button class="btn btn-nav" id="nav-ledgers" style="width: 100%; margin-bottom: 4px;" onclick="switchTab('ledgers')">Ledgers</button>
-            <button class="btn btn-nav" id="nav-history" style="width: 100%; margin-bottom: 10px;" onclick="switchTab('history')">History</button>
-
-            <div id="ledgersSection" style="display: none; margin-top: 10px;">
+        <main class="main-content" id="ledgerView" style="display: none;">
+            <div class="borrower-selector-container">
                 <h3>Accounts</h3>
                 <div class="borrower-selector" id="borrowerList"></div>
                 <button class="btn btn-action" style="width: 100%; margin-top: 4px; font-size: 0.85rem;" onclick="openAddAccountModal()">+ Add Account</button>
+                <div class="sidebar-totals-box" style="margin-top: 8px;">
+                    <label>Total Balance</label>
+                    <div class="value" id="sidebarGrandTotal">₹0.00</div>
+                </div>
             </div>
-            
-            <div class="sidebar-totals-box">
-                <label>Total Balance</label>
-                <div class="value" id="sidebarGrandTotal">₹0.00</div>
-            </div>
-        </aside>
 
-        <main class="main-content" id="ledgerView" style="display: none;">
             <div class="summary-card">
                 <div>Account: <strong id="activeBorrowerName" onclick="renameActiveAccount()" title="Click to rename account">Jaleel</strong></div>
                 <div>Balance: <span id="totalBalance">₹0.00</span></div>
@@ -968,15 +976,17 @@
                     <div class="value" id="dashClosingBalance">₹0.00</div>
                 </div>
             </div>
+        </main>
 
-            <!-- Staff Advance & Salary Tracking Module -->
-            <div class="staff-section">
-                <div class="staff-header-row">
-                    <h3 style="margin: 0; color: var(--text-main); font-size: 0.75rem; text-transform: uppercase;">Staff Advance & Salary Tracking</h3>
-                    <button class="btn btn-action" style="font-size: 0.75rem; padding: 5px 10px;" onclick="openAddStaffModal()">+ Add Staff</button>
-                </div>
+        <!-- Staff Advance & Salary Tracking Tab View -->
+        <main class="main-content" id="staffView" style="display: none;">
+            <div class="summary-card">
+                <div>Staff Advance & Salary Tracking</div>
+                <button class="btn btn-action" style="font-size: 0.8rem; padding: 5px 10px;" onclick="openAddStaffModal()">+ Add Staff</button>
+            </div>
 
-                <!-- Staff Floating Pills -->
+            <!-- Staff Floating Pills -->
+            <div class="staff-section" style="margin-bottom: 0;">
                 <div id="staffSelectorTabs"></div>
 
                 <div class="staff-info-bar">
@@ -1035,6 +1045,26 @@
         </main>
     </div>
 </div>
+
+<!-- Bottom Navigation Bar -->
+<nav class="bottom-nav" id="mainBottomNav" style="display: none;">
+    <button class="nav-tab-btn active" id="nav-dashboard" onclick="switchTab('dashboard')">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Dashboard
+    </button>
+    <button class="nav-tab-btn" id="nav-ledgers" onclick="switchTab('ledgers')">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 14H7v-2h7v2m3-4H7v-2h10v2m0-4H7V7h10v2Z"/></svg>
+        Ledgers
+    </button>
+    <button class="nav-tab-btn" id="nav-staff" onclick="switchTab('staff')">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3m-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3m0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5m8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5Z"/></svg>
+        Staff Adv.
+    </button>
+    <button class="nav-tab-btn" id="nav-history" onclick="switchTab('history')">
+        <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7a7 7 0 0 1 7 7 7 7 0 0 1-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.92 8.92 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12Z"/></svg>
+        History
+    </button>
+</nav>
 
 <!-- DEDICATED PRINT STATEMENT SHEET -->
 <div id="printStatementSheet">
@@ -1250,6 +1280,7 @@
         if (!user) {
             document.getElementById('homePageWrapper').style.display = 'flex';
             document.getElementById('mainAppContainer').style.display = 'none';
+            document.getElementById('mainBottomNav').style.display = 'none';
             if (unsubscribeSnapshot) unsubscribeSnapshot();
         }
     });
@@ -1276,6 +1307,7 @@
 
             document.getElementById('homePageWrapper').style.display = 'none';
             document.getElementById('mainAppContainer').style.display = 'block';
+            document.getElementById('mainBottomNav').style.display = 'grid';
             
             startFirestoreListener();
             showToast("Successfully logged in.");
@@ -1306,10 +1338,11 @@
                 }
                 
                 document.getElementById('activeBorrowerName').innerText = activeBorrower;
-                renderSidebar();
+                renderAccountList();
                 
                 if (currentTab === 'ledgers' || currentTab === 'ledger') renderLedger();
                 else if (currentTab === 'dashboard') updateDashboard();
+                else if (currentTab === 'staff') renderStaffModule();
                 else if (currentTab === 'history') renderDayHistory();
             } else {
                 await saveToFirestoreImmediate();
@@ -1360,7 +1393,7 @@
         return bal;
     }
 
-    function renderSidebar() {
+    function renderAccountList() {
         const selector = document.getElementById('borrowerList');
         const fragment = document.createDocumentFragment();
         let totalAcrossAccounts = 0;
@@ -1370,13 +1403,10 @@
             totalAcrossAccounts += accountBal;
 
             const btn = document.createElement('button');
-            btn.className = `btn-tab ${name === activeBorrower && (currentTab === 'ledgers' || currentTab === 'ledger') ? 'active' : ''}`;
+            btn.className = `btn-tab ${name === activeBorrower ? 'active' : ''}`;
             
             const nameSpan = document.createElement('span');
             nameSpan.textContent = name;
-            nameSpan.style.overflow = 'hidden';
-            nameSpan.style.textOverflow = 'ellipsis';
-            nameSpan.style.whiteSpace = 'nowrap';
 
             const balSpan = document.createElement('span');
             balSpan.className = 'account-bal';
@@ -1384,7 +1414,7 @@
 
             btn.appendChild(nameSpan);
             btn.appendChild(balSpan);
-            btn.onclick = () => { switchTab('ledgers'); switchBorrower(name); };
+            btn.onclick = () => { switchBorrower(name); };
             fragment.appendChild(btn);
         });
 
@@ -1397,18 +1427,18 @@
         currentTab = tab;
         document.getElementById('ledgerView').style.display = 'none';
         document.getElementById('dashboardView').style.display = 'none';
+        document.getElementById('staffView').style.display = 'none';
         document.getElementById('historyView').style.display = 'none';
-        document.getElementById('ledgersSection').style.display = 'none';
 
-        document.getElementById('nav-dashboard').className = 'btn-nav' + (tab === 'dashboard' ? ' active' : '');
-        document.getElementById('nav-ledgers').className = 'btn-nav' + (tab === 'ledgers' ? ' active' : '');
-        document.getElementById('nav-history').className = 'btn-nav' + (tab === 'history' ? ' active' : '');
+        ['dashboard', 'ledgers', 'staff', 'history'].forEach(t => {
+            const el = document.getElementById(`nav-${t}`);
+            if (el) el.className = 'nav-tab-btn' + (t === tab ? ' active' : '');
+        });
 
         if (tab === 'dashboard') {
             document.getElementById('dashboardView').style.display = 'flex';
             updateDashboard();
         } else if (tab === 'ledgers' || tab === 'ledger') {
-            document.getElementById('ledgersSection').style.display = 'block';
             document.getElementById('ledgerView').style.display = 'flex';
             
             const todayStr = getISODate();
@@ -1416,11 +1446,14 @@
             document.getElementById('filterEndDate').value = todayStr;
 
             renderLedger();
+        } else if (tab === 'staff') {
+            document.getElementById('staffView').style.display = 'flex';
+            renderStaffModule();
         } else if (tab === 'history') {
             document.getElementById('historyView').style.display = 'flex';
             renderDayHistory();
         }
-        renderSidebar();
+        renderAccountList();
     }
 
     window.switchBorrower = function(name) {
@@ -1431,7 +1464,7 @@
         document.getElementById('filterStartDate').value = todayStr;
         document.getElementById('filterEndDate').value = todayStr;
         
-        renderSidebar();
+        renderAccountList();
         renderLedger();
     }
 
@@ -1488,7 +1521,7 @@
         }
 
         document.getElementById('activeBorrowerName').textContent = activeBorrower;
-        renderSidebar();
+        renderAccountList();
         renderLedger();
         showToast("Account renamed successfully.");
     }
@@ -1507,7 +1540,7 @@
         document.getElementById('txAmount').value = '';
         document.getElementById('txDesc').focus();
         renderLedger();
-        renderSidebar();
+        renderAccountList();
         showToast("Entry added.");
     }
 
@@ -1683,7 +1716,7 @@
             item.amount = newAmount;
             saveToFirestoreImmediate();
             renderLedger();
-            renderSidebar();
+            renderAccountList();
             showToast("Transaction updated.");
         } else {
             showToast("Invalid input provided.");
@@ -1695,7 +1728,7 @@
             ledgers[activeBorrower] = ledgers[activeBorrower].filter(item => item.id !== id);
             saveToFirestoreImmediate();
             renderLedger();
-            renderSidebar();
+            renderAccountList();
             showToast("Entry deleted.");
         }
     }
@@ -1723,7 +1756,7 @@
             }
 
             activeBorrower = Object.keys(ledgers)[0] || '';
-            renderSidebar();
+            renderAccountList();
             if (activeBorrower) {
                 switchBorrower(activeBorrower);
             } else {
@@ -2035,7 +2068,7 @@
         });
         document.getElementById('dashTotalOutstanding').textContent = formatINR(totalOutstanding);
 
-        renderStaffModule();
+        updateDashboardTotals();
     }
     
     window.saveCurrentDayHistory = function() {
