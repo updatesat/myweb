@@ -1,34 +1,22 @@
 {
-  "$schema": "https://json.schemastore.org/web-manifest.json",
-  "id": "/",
-  "name": "Mujeeb Fleet & Multi-Ledger Manager",
-  "short_name": "Mujeeb Fleet",
-  "description": "A secure, multi-device cloud fleet and multi-ledger management application.",
-  "start_url": "/",
-  "scope": "/",
+  "name": "Daily Closing System",
+  "short_name": "DailyClosing",
+  "description": "Professional Accounting & Daily Closing Management",
+  "start_url": "./INDEX3.html",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#ffffff",
-  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "theme_color": "#111111",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icons/icon-maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "type": "image/png"
     }
-  ],
-  "categories": ["utilities", "productivity", "business"]
+  ]
 }
