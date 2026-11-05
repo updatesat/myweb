@@ -2,21 +2,9 @@
   "name": "Daily Closing System",
   "short_name": "DailyClosing",
   "description": "Professional Accounting & Daily Closing Management",
-  "start_url": "./INDEX3.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#111111",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "orientation": "portrait-primary"
 }
