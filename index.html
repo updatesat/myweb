@@ -44,7 +44,7 @@
 
         body {
             margin: 0;
-            padding: 24px;
+            padding: 16px;
             background-color: var(--bg);
             color: var(--text-main);
             font-size: 15px;
@@ -97,6 +97,8 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            padding: 16px;
+            box-sizing: border-box;
         }
         .home-card {
             background: var(--card-bg);
@@ -104,8 +106,10 @@
             border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             text-align: center;
-            width: 380px; 
+            width: 100%;
+            max-width: 380px; 
             border: 1px solid var(--border);
+            box-sizing: border-box;
         }
         .home-card h1 {
             margin-top: 0;
@@ -194,13 +198,13 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Workspace Container - FIXED: removed min-width constraint to prevent UI stretching */
+        /* Workspace Container */
         .container {
             max-width: 1400px;
             width: 100%;
             margin: 0 auto;
             background: var(--card-bg);
-            padding: 24px 28px;
+            padding: 16px 20px;
             border-radius: 6px;
             border: 1px solid var(--border);
             position: relative;
@@ -211,7 +215,7 @@
         .app-title-box {
             border-bottom: 2px solid var(--border);
             padding-bottom: 14px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -219,7 +223,7 @@
         .app-title-box h1 {
             color: var(--text-main);
             margin: 0;
-            font-size: 1.35rem;
+            font-size: 1.2rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -232,8 +236,8 @@
 
         .layout-wrapper {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 24px;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
             align-items: start;
         }
 
@@ -321,16 +325,18 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            min-width: 0; /* Prevents flex items from overflowing grid container */
         }
 
         .btn {
-            padding: 7px 14px;
+            padding: 8px 14px;
             border: 1px solid var(--border);
             border-radius: 3px;
             cursor: pointer;
             font-size: 0.95rem;
             background: var(--card-bg);
             color: var(--text-main);
+            box-sizing: border-box;
         }
         .btn:active { opacity: 0.8; }
 
@@ -359,12 +365,13 @@
         .btn-whatsapp { background-color: var(--card-bg); color: var(--whatsapp); border-color: var(--whatsapp); }
 
         .btn-icon {
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             padding: 0;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
         .btn-icon svg {
             width: 15px;
@@ -374,16 +381,18 @@
         
         .summary-card {
             background: var(--card-bg);
-            padding: 14px 20px;
+            padding: 14px 16px;
             border-radius: 4px;
             border: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1.05rem;
+            font-size: 1rem;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         .summary-card span {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: var(--text-main);
         }
@@ -399,7 +408,7 @@
 
         form {
             display: grid;
-            grid-template-columns: 160px 1fr 140px 140px auto;
+            grid-template-columns: 140px 1fr 120px 120px auto;
             gap: 10px;
             background: var(--card-bg);
             padding: 16px;
@@ -413,7 +422,7 @@
             gap: 3px;
         }
         input, select {
-            padding: 7px 10px;
+            padding: 8px 10px;
             border: 1px solid var(--border);
             border-radius: 3px;
             width: 100%;
@@ -429,15 +438,16 @@
 
         .filter-bar {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             background: var(--card-bg);
             padding: 12px 16px;
             border-radius: 4px;
             border: 1px solid var(--border);
+            flex-wrap: wrap;
         }
         .filter-bar input[type="date"] {
-            width: 150px;
+            width: 140px;
             padding: 6px 8px;
         }
         
@@ -445,24 +455,26 @@
             background: var(--card-bg);
             border-radius: 4px;
             border: 1px solid var(--border);
-            overflow: hidden;
+            overflow-x: auto; /* Enables smooth horizontal scrolling on mobile screens */
+            -webkit-overflow-scrolling: touch;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px; /* Ensures columns stay properly proportioned */
         }
         th, td {
-            padding: 10px 16px;
+            padding: 10px 14px;
             border-bottom: 1px solid var(--border);
             text-align: left;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-main);
         }
         th { 
             background-color: var(--card-bg); 
             font-weight: bold;
             color: var(--text-muted);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -477,6 +489,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .toolbar-left { display: flex; gap: 8px; align-items: center; }
         
@@ -488,14 +502,20 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            padding: 16px;
+            box-sizing: border-box;
         }
         .modal-content {
             background: var(--card-bg);
-            padding: 24px;
+            padding: 20px;
             border-radius: 4px;
-            width: 380px;
+            width: 100%;
+            max-width: 380px;
             border: 1px solid var(--border);
             color: var(--text-main);
+            box-sizing: border-box;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal-content h3 {
             margin-top: 0;
@@ -525,12 +545,12 @@
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
+            gap: 12px;
             margin-bottom: 16px;
         }
         .dash-card {
             background: var(--card-bg);
-            padding: 16px;
+            padding: 14px;
             border-radius: 4px;
             border: 1px solid var(--border);
         }
@@ -543,7 +563,7 @@
             letter-spacing: 0.4px;
         }
         .dash-card .value {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: var(--text-main);
         }
@@ -554,7 +574,6 @@
         }
         .cash-input-group { display: flex; gap: 8px; }
 
-        /* --- FIXED: Staff Section container bounds & scrolling wrapping --- */
         .staff-section {
             background: var(--card-bg);
             padding: 16px;
@@ -566,7 +585,6 @@
             overflow: hidden;
         }
 
-        /* --- FIXED: Prevent infinite horizontal staff expansion --- */
         #staffSelectorTabs {
             display: flex;
             flex-wrap: wrap;
@@ -600,6 +618,40 @@
             border-bottom: 1px solid var(--border);
             padding-bottom: 8px;
             margin-bottom: 10px;
+        }
+
+        /* --- MOBILE MEDIA QUERIES --- */
+        @media (max-width: 900px) {
+            .layout-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .dash-card-closing {
+                grid-column: span 2;
+            }
+            form, #staffTransactionForm {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 8px;
+            }
+            .container {
+                padding: 12px;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .dash-card-closing {
+                grid-column: span 1;
+            }
+            .history-card > div[style*="grid-template-columns"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
         }
 
         /* --- PRINT STYLES --- */
@@ -849,7 +901,7 @@
                     <!-- Dynamically populated staff buttons -->
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.9rem; color: var(--secondary);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.9rem; color: var(--secondary); flex-wrap: wrap; gap: 6px;">
                     <div>
                         Active Staff: <strong id="activeStaffName" style="color: var(--text-main);">None</strong> | 
                         Advance Balance: <strong id="activeStaffBalance" style="color: var(--danger);">₹0.00</strong>
