@@ -422,9 +422,9 @@
             opacity: 0.7;
         }
 
-        form {
+        form, #staffTransactionForm {
             display: grid;
-            grid-template-columns: 140px 1fr 110px 110px auto;
+            grid-template-columns: 1fr 2fr 1fr;
             gap: 8px;
             background: var(--card-bg);
             padding: 10px;
@@ -689,8 +689,20 @@
             .dash-card-closing {
                 grid-column: span 2;
             }
+        }
+
+        @media (max-width: 768px) {
             form, #staffTransactionForm {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+            }
+            form .form-group:nth-child(2), 
+            #staffTransactionForm .form-group:nth-child(2) {
+                grid-column: span 2;
+            }
+            form button[type="submit"], 
+            #staffTransactionForm button[type="submit"] {
+                grid-column: span 2;
+                width: 100%;
             }
         }
 
@@ -978,7 +990,7 @@
                     </div>
                 </div>
 
-                <form id="staffTransactionForm" onsubmit="addStaffTransaction(event)" style="grid-template-columns: 130px 1fr 110px 120px auto; margin-bottom: 10px; box-shadow: none;">
+                <form id="staffTransactionForm" onsubmit="addStaffTransaction(event)" style="box-shadow: none; margin-bottom: 10px;">
                     <div class="form-group">
                         <input type="date" id="staffTxDate" required>
                     </div>
