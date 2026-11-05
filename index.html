@@ -1,746 +1,2097 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#0f172a" />
-  <title>Mujeeb Fleet & Multi-Ledger Manager</title>
-  
-  <link rel="manifest" href="/manifest.json">
-  
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self'; 
-    script-src 'self' 'unsafe-inline' https://www.gstatic.com; 
-    style-src 'self' 'unsafe-inline'; 
-    connect-src 'self' https://*.firebaseio.com https://*.googleapis.com wss://*.firebaseio.com;
-    img-src 'self' data:;
-    frame-ancestors 'none';
-  " />
-
-  <style>
-    :root {
-      --bg-primary: #f8fafc;
-      --bg-surface: #ffffff;
-      --bg-card: #ffffff;
-      --border-color: #e2e8f0;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --brand-primary: #2563eb;
-      --brand-primary-hover: #1d4ed8;
-      --brand-success: #10b981;
-      --brand-danger: #ef4444;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-primary); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 75px; }
-
-    .app-header { background: #0f172a; color: #ffffff; padding: 14px 16px; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-md); display: flex; justify-content: space-between; align-items: center; }
-    .app-brand h1 { font-size: 1.1rem; font-weight: 700; }
-    .app-brand span { font-size: 0.75rem; color: #94a3b8; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAILY CLOSING | Professional Accounting</title>
     
-    .sync-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: #64748b; color: #fff; transition: background 0.3s; }
-    .sync-badge.active { background: #059669; }
+    <link rel="manifest" href="manifest.json">
 
-    .main-container { max-width: 800px; width: 100%; margin: 0 auto; padding: 12px; flex: 1; }
-    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow-sm); }
-    .card-title { font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    <style>
+        :root {
+            --primary: #111111;
+            --primary-hover: #333333;
+            --secondary: #555555;
+            --success: #0b7a3e;
+            --warning: #b36b00;
+            --danger: #b30000;
+            --bg: #f4f4f4;
+            --card-bg: #ffffff;
+            --border: #cccccc;
+            --text-main: #111111;
+            --text-muted: #555555;
+            --whatsapp: #0b7a3e;
+        }
 
-    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
-    input, select { width: 100%; height: 44px; padding: 0 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.95rem; background-color: #fff; }
+        [data-theme="dark"] {
+            --primary: #e2e8f0;
+            --primary-hover: #cbd5e1;
+            --secondary: #94a3b8;
+            --success: #22c55e;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --whatsapp: #22c55e;
+        }
 
-    .btn { height: 46px; border: none; border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 100%; transition: opacity 0.2s; }
-    .btn:active { opacity: 0.85; }
-    .btn-primary { background: var(--brand-primary); color: #ffffff; }
-    .btn-secondary { background: #64748b; color: #ffffff; }
-    .btn-success { background: var(--brand-success); color: #ffffff; }
+        body, button, input, select, table, th, td, label, h1, h2, h3, p {
+            font-family: 'Times New Roman', Times, serif !important;
+        }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-    .stat-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 8px; text-align: center; }
-    .stat-label { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-    .stat-value { font-size: 0.95rem; font-weight: 800; margin-top: 4px; }
-    .val-expense { color: var(--brand-danger); }
-    .val-revenue { color: var(--brand-success); }
-    .val-profit { color: var(--brand-primary); }
+        body {
+            margin: 0;
+            padding: 24px;
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-size: 15px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
 
-    .table-wrapper { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border-color); }
-    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; white-space: nowrap; background: #fff; }
-    th { background: #f1f5f9; color: #334155; font-weight: 700; padding: 10px 8px; text-align: left; }
-    td { padding: 10px 8px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
-    
-    .action-btn-sm { padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; border: none; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 6px 0; z-index: 200; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 0.68rem; font-weight: 600; cursor: pointer; width: 25%; }
-    .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
-    .nav-item.active { color: var(--brand-primary); }
+        .main-content, .sidebar {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
 
-    .toast { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: #fff; padding: 10px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease; opacity: 0; z-index: 300; pointer-events: none; }
-    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        /* --- TOAST NOTIFICATIONS --- */
+        #toastContainer {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10000;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--primary);
+            color: var(--bg);
+            padding: 10px 18px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-    @media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
-  </style>
+        /* --- LOGIN PAGE --- */
+        #homePageWrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #111111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .home-card {
+            background: var(--card-bg);
+            padding: 36px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-align: center;
+            width: 380px; 
+            border: 1px solid var(--border);
+        }
+        .home-card h1 {
+            margin-top: 0;
+            color: var(--text-main);
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+        }
+        .home-card p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+        .home-card input[type="email"],
+        .home-card input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 14px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            background: var(--card-bg);
+            color: var(--text-main);
+        }
+        .home-card input:focus { 
+            border-color: var(--primary); 
+        }
+        
+        .remember-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+        .remember-row input[type="checkbox"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        .remember-row label {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .home-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 3px;
+            background: var(--primary);
+            color: var(--bg);
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .home-btn:hover {
+            opacity: 0.9;
+        }
+
+        .auth-error {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* --- BOTTOM RIGHT ACTIONS --- */
+        .bottom-right-actions {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            gap: 10px;
+        }
+        .bottom-right-actions .btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff !important;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+        .bottom-right-actions .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Workspace Container - FIXED: removed min-width constraint to prevent UI stretching */
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 24px 28px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            position: relative;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .app-title-box {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 14px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .app-title-box h1 {
+            color: var(--text-main);
+            margin: 0;
+            font-size: 1.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .layout-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .sidebar {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+        .sidebar h3 {
+            margin-top: 0;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .borrower-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 380px;
+            overflow-y: auto;
+            margin-bottom: 14px;
+            padding-right: 4px;
+        }
+
+        .btn-tab {
+            background-color: transparent;
+            color: var(--text-main);
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            text-align: left;
+            width: 100%;
+            box-sizing: border-box;
+            word-break: break-word;
+        }
+        .btn-tab:hover { 
+            background-color: var(--border); 
+        }
+        .btn-tab.active {
+            background-color: var(--primary);
+            color: var(--bg);
+            border-color: var(--primary);
+            font-weight: bold;
+        }
+        .btn-tab.active .account-bal {
+            color: var(--bg);
+        }
+        .account-bal {
+            font-size: 0.9rem;
+            color: var(--danger);
+            text-align: right;
+            padding-left: 10px;
+            white-space: nowrap;
+        }
+
+        .sidebar-totals-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+        .sidebar-totals-box label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .sidebar-totals-box .value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--danger);
+            margin-top: 3px;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 7px 14px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            background: var(--card-bg);
+            color: var(--text-main);
+        }
+        .btn:active { opacity: 0.8; }
+
+        .btn-nav {
+            background-color: var(--card-bg);
+            color: var(--secondary);
+            text-align: left;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 6px;
+        }
+        .btn-nav:hover { background-color: var(--border); color: var(--text-main); }
+        .btn-nav.active {
+            background-color: var(--primary);
+            color: var(--bg);
+            border-color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .btn-action { background-color: var(--primary); color: var(--bg); border-color: var(--primary); }
+        .btn-action:hover { opacity: 0.9; }
+        
+        .btn-warning { background-color: var(--card-bg); color: var(--warning); border-color: var(--warning); }
+        .btn-danger { background-color: var(--card-bg); color: var(--danger); border-color: var(--danger); }
+        .btn-success { background-color: var(--success); color: #fff; border-color: var(--success); }
+        .btn-whatsapp { background-color: var(--card-bg); color: var(--whatsapp); border-color: var(--whatsapp); }
+
+        .btn-icon {
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-icon svg {
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
+        }
+        
+        .summary-card {
+            background: var(--card-bg);
+            padding: 14px 20px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.05rem;
+        }
+        .summary-card span {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        #activeBorrowerName {
+            cursor: pointer;
+            text-decoration: underline dotted;
+            text-underline-offset: 4px;
+        }
+        #activeBorrowerName:hover {
+            opacity: 0.7;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 160px 1fr 140px 140px auto;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            align-items: end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        input, select {
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+            background: var(--card-bg);
+            outline: none;
+            color: var(--text-main);
+        }
+        input:focus, select:focus { 
+            border-color: var(--primary);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 12px 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+        .filter-bar input[type="date"] {
+            width: 150px;
+            padding: 6px 8px;
+        }
+        
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        th { 
+            background-color: var(--card-bg); 
+            font-weight: bold;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        tbody tr:hover {
+            background-color: var(--border);
+        }
+        .type-borrowed { color: var(--danger); font-weight: bold; }
+        .type-returned { color: var(--success); font-weight: bold; }
+        .actions-cell { display: flex; gap: 6px; }
+        
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toolbar-left { display: flex; gap: 8px; align-items: center; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 4px;
+            width: 380px;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            font-size: 1.15rem;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .denom-grid {
+            display: grid;
+            grid-template-columns: 60px 1fr 100px;
+            gap: 6px;
+            align-items: center;
+            margin-top: 6px;
+        }
+        .denom-grid input {
+            padding: 6px 8px;
+        }
+        .denom-total { text-align: right; font-weight: bold; font-size: 0.9rem; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .dash-card {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+        .dash-card label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .dash-card .value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+        .dash-card-closing {
+            background: var(--card-bg);
+            border-color: var(--primary);
+            grid-column: span 4;
+        }
+        .cash-input-group { display: flex; gap: 8px; }
+
+        /* --- FIXED: Staff Section container bounds & scrolling wrapping --- */
+        .staff-section {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* --- FIXED: Prevent infinite horizontal staff expansion --- */
+        #staffSelectorTabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-height: 120px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin-bottom: 12px;
+            padding-bottom: 4px;
+        }
+
+        #staffSelectorTabs .btn {
+            flex: 0 1 auto;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .history-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* --- PRINT STYLES --- */
+        #printStatementSheet {
+            display: none;
+        }
+
+        @media print {
+            #homePageWrapper, .sidebar, form, .filter-bar, .toolbar, .actions-cell, th:last-child, .print-hide, button, .app-title-box, .summary-card, .table-container {
+                display: none !important;
+            }
+            .layout-wrapper { display: block; }
+            body { padding: 0; background: none; color: #000 !important; }
+            .container { box-shadow: none; max-width: 100%; padding: 0; border: none; background: none; }
+            
+            #printStatementSheet {
+                display: block !important;
+                width: 100%;
+                background: #fff;
+                color: #000;
+            }
+            .print-header {
+                text-align: center;
+                border-bottom: 2px solid #000;
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+            }
+            .print-header h2 { margin: 0; font-size: 1.4rem; text-transform: uppercase; }
+            .print-header p { margin: 4px 0 0; font-size: 0.95rem; }
+            .print-meta {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 15px;
+                font-size: 1rem;
+                font-weight: bold;
+            }
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            .print-table th, .print-table td {
+                border: 1px solid #333;
+                padding: 8px 10px;
+                font-size: 0.9rem;
+                color: #000;
+                text-align: left;
+            }
+            .print-table th {
+                background: #eee !important;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+            }
+            .print-footer {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 40px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
 </head>
-<body>
+<body data-theme="light">
 
-  <!-- DIRECT APPLICATION ROOT (NO CUSTOM LOCK SCREEN UI) -->
-  <div id="appContent">
-    <header class="app-header">
-      <div class="app-brand">
-        <h1>Mujeeb Kunjippa</h1>
-        <span>Multi-Device Cloud Manager</span>
-      </div>
-      <div class="sync-badge" id="syncStatus">Connecting...</div>
-    </header>
+<!-- TOAST CONTAINER -->
+<div id="toastContainer"></div>
 
-    <main class="main-container">
-      <button id="btnInstallPWA" class="btn btn-primary" style="display:none; margin-bottom: 12px; background: #059669;">
-        📲 Install App on Device
-      </button>
-
-      <!-- ENTRY VIEW -->
-      <section id="viewEntry" class="tab-view">
-        <div class="card">
-          <div class="card-title">
-            <span>New Load Entry</span>
-            <button class="action-btn-sm" style="background:#e2e8f0; color:#334155" id="btnGoLedgers">+ Manage Ledgers</button>
-          </div>
-
-          <div class="form-group">
-            <label for="entryLedger">Select Ledger / Account</label>
-            <select id="entryLedger"></select>
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="tripDate">Trip Date</label>
-              <input type="date" id="tripDate" />
+<!-- LOGIN PAGE -->
+<div id="homePageWrapper">
+    <div class="home-card">
+        <h1>Daily Closing</h1>
+        <p>Admin Login</p>
+        
+        <form onsubmit="loginApp(event)" style="background: transparent; border: none; padding: 0; display: block;">
+            <input type="email" id="authEmailInput" placeholder="Email" required>
+            <input type="password" id="authPasswordInput" placeholder="Password" required>
+            
+            <div class="remember-row">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">Remember</label>
             </div>
-            <div class="form-group">
-              <label for="vehicleNo">Vehicle Number</label>
-              <input type="text" id="vehicleNo" list="vehicleDatalist" placeholder="e.g. KL-10-AB-1234" maxlength="15" />
-              <datalist id="vehicleDatalist"></datalist>
-            </div>
-          </div>
 
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="loadItem">Load / Cargo Details</label>
-              <input type="text" id="loadItem" placeholder="e.g. Cement, Sand" maxlength="50" />
-            </div>
-            <div class="form-group">
-              <label for="quantity">Quantity (Tons / Units)</label>
-              <input type="number" id="quantity" inputmode="decimal" placeholder="0.00" />
-            </div>
-          </div>
+            <button type="submit" class="home-btn">Sign In</button>
+        </form>
+        
+        <div id="authErrorMsg" class="auth-error">Invalid login credentials.</div>
+    </div>
 
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="buyRate">Buy Unit Price (₹)</label>
-              <input type="number" id="buyRate" inputmode="decimal" placeholder="0.00" />
-            </div>
-            <div class="form-group">
-              <label for="sellRate">Sell Unit Price (₹)</label>
-              <input type="number" id="sellRate" inputmode="decimal" placeholder="0.00" />
-            </div>
-          </div>
+    <div class="bottom-right-actions">
+        <button class="btn" onclick="exportJSON()">Backup</button>
+        <input type="file" id="appBackupInput" accept=".json" style="display: none;" onchange="importJSON(event)">
+        <button class="btn" onclick="document.getElementById('appBackupInput').click()">Restore</button>
+    </div>
+</div>
 
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="buyVal">Total Buy / Expense (₹)</label>
-              <input type="number" id="buyVal" inputmode="decimal" placeholder="0.00" />
-            </div>
-            <div class="form-group">
-              <label for="sellVal">Total Sell / Freight (₹)</label>
-              <input type="number" id="sellVal" inputmode="decimal" placeholder="0.00" />
-            </div>
-          </div>
-
-          <button class="btn btn-primary" id="btnSaveTrip">Save Record</button>
-          <button class="btn btn-secondary" id="btnCancelEdit" style="display:none; margin-top:8px;">Cancel Edit</button>
+<!-- Main App Workspace -->
+<div class="container" id="mainAppContainer" style="display: none;">
+    <div class="app-title-box">
+        <h1>Daily Closing System</h1>
+        <div class="header-actions">
+            <button class="btn" onclick="toggleTheme()" id="themeToggleBtn" title="Toggle Dark/Light Mode">🌙</button>
+            <button class="btn btn-danger" style="font-size: 0.85rem; padding: 6px 14px;" onclick="logoutApp()">Sign Out</button>
         </div>
-      </section>
+    </div>
 
-      <!-- REPORTS VIEW -->
-      <section id="viewReports" class="tab-view" style="display: none;">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">Total Expense</div>
-            <div class="stat-value val-expense" id="summaryBuy">₹0.00</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Total Revenue</div>
-            <div class="stat-value val-revenue" id="summarySell">₹0.00</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Net Profit</div>
-            <div class="stat-value val-profit" id="summaryProfit">₹0.00</div>
-          </div>
-        </div>
+    <div class="layout-wrapper">
+        <aside class="sidebar">
+            <h3>Menu</h3>
+            <button class="btn btn-nav active" id="nav-dashboard" style="width: 100%; margin-bottom: 6px;" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="btn btn-nav" id="nav-ledgers" style="width: 100%; margin-bottom: 6px;" onclick="switchTab('ledgers')">Ledgers</button>
+            <button class="btn btn-nav" id="nav-history" style="width: 100%; margin-bottom: 12px;" onclick="switchTab('history')">History</button>
 
-        <div class="card">
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="filterLedger">Ledger Filter</label>
-              <select id="filterLedger"></select>
+            <div id="ledgersSection" style="display: none; margin-top: 14px;">
+                <h3>Accounts</h3>
+                <div class="borrower-selector" id="borrowerList"></div>
+                <button class="btn btn-action" style="width: 100%; margin-top: 6px;" onclick="openAddAccountModal()">+ Add Account</button>
             </div>
-            <div class="form-group">
-              <label for="filterVehicle">Vehicle Filter</label>
-              <select id="filterVehicle">
-                <option value="ALL">All Vehicles</option>
-              </select>
+            
+            <div class="sidebar-totals-box">
+                <label>Total Balance</label>
+                <div class="value" id="sidebarGrandTotal">₹0.00</div>
             </div>
-          </div>
-        </div>
+        </aside>
 
-        <div class="card">
-          <div class="card-title">Live Realtime Entries</div>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Ledger</th>
-                  <th>Vehicle</th>
-                  <th>Cargo</th>
-                  <th>Qty</th>
-                  <th>Buy (₹)</th>
-                  <th>Sell (₹)</th>
-                  <th>Profit (₹)</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="tripReportRows"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- FLEET VIEW -->
-      <section id="viewFleet" class="tab-view" style="display: none;">
-        <div class="card">
-          <div class="card-title">Register Fleet Vehicle</div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="fleetVehicleNo">Vehicle Number</label>
-              <input type="text" id="fleetVehicleNo" placeholder="e.g. KL-10-AB-1234" maxlength="15" />
+        <main class="main-content" id="ledgerView" style="display: none;">
+            <div class="summary-card">
+                <div>Account: <strong id="activeBorrowerName" onclick="renameActiveAccount()" title="Click to rename account">Jaleel</strong></div>
+                <div>Balance: <span id="totalBalance">₹0.00</span></div>
             </div>
-            <div class="form-group">
-              <label for="fleetMaxCap">Max Capacity (Tons)</label>
-              <input type="number" id="fleetMaxCap" inputmode="decimal" placeholder="0.00" />
+
+            <form id="transactionForm" onsubmit="addTransaction(event)">
+                <div class="form-group">
+                    <input type="date" id="txDate" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="txDesc" placeholder="Description" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="txAmount" placeholder="Amount" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <select id="txType">
+                        <option value="borrowed">Given</option>
+                        <option value="returned">Received</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-action" style="height: 35px;">Add Entry</button>
+            </form>
+
+            <div class="filter-bar">
+                <input type="date" id="filterStartDate">
+                <span>to</span>
+                <input type="date" id="filterEndDate">
+                <button class="btn btn-action" style="padding: 6px 14px;" onclick="renderLedger()">Filter</button>
+                <button class="btn btn-warning" style="padding: 6px 14px;" onclick="clearFilters()">Reset</button>
+                <button class="btn btn-success" id="toggleOpeningBalBtn" style="padding: 6px 14px;" onclick="toggleOpeningBalanceView()">Opening Bal: ON</button>
             </div>
-          </div>
-          <button class="btn btn-primary" id="btnSaveFleet">Save Vehicle to Cloud</button>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Balance (₹)</th>
+                            <th style="width: 80px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledgerBody"></tbody>
+                </table>
+            </div>
+
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <button class="btn btn-action btn-icon" onclick="printLedgerStatement()" title="Print Statement">
+                        <svg viewBox="0 0 24 24"><path d="M18 3H6v4h12M19 8H5a3 3 0 0 0-3 3v6h4v4h12v-4h4v-6a3 3 0 0 0-3-3m-3 11H8v-5h8m3-7a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>
+                    </button>
+                    <button class="btn btn-whatsapp btn-icon" onclick="sendWhatsAppStatement()" title="WhatsApp">
+                        <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    </button>
+                </div>
+                <button class="btn btn-danger" style="font-size: 0.85rem;" onclick="deleteCurrentAccount()">Delete Account</button>
+            </div>
+        </main>
+
+        <main class="main-content" id="dashboardView">
+            <div class="summary-card">
+                <div>Dashboard Overview</div>
+                <button class="btn btn-success btn-icon" onclick="saveCurrentDayHistory()" title="Save Day History">
+                    <svg viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V7l-4-4m-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3m3-10H5V5h10v4Z"/></svg>
+                </button>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dash-card">
+                    <label>Total Outstanding</label>
+                    <div class="value" id="dashTotalOutstanding">₹0.00</div>
+                </div>
+                <div class="dash-card">
+                    <label>Total Staff Entry</label>
+                    <div class="value" id="dashTotalStaffEntry" style="color: var(--warning);">₹0.00</div>
+                </div>
+                <div class="dash-card">
+                    <label>SBI</label>
+                    <input type="number" id="sbiInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                </div>
+                <div class="dash-card">
+                    <label>Phone Pe</label>
+                    <input type="number" id="phonePeInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                </div>
+                <div class="dash-card">
+                    <label>Owners Holdings</label>
+                    <input type="number" id="ownersHoldingsInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                </div>
+                <div class="dash-card">
+                    <label>Combined Outstanding</label>
+                    <div class="value" id="dashCombinedOutstanding" style="color: var(--danger);">₹0.00</div>
+                </div>
+                <div class="dash-card">
+                    <label>Day Closing</label>
+                    <input type="number" id="dayClosingInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                </div>
+                <div class="dash-card">
+                    <label>Cash in Shelf</label>
+                    <div class="cash-input-group">
+                        <input type="number" id="cashInShelfInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                        <button class="btn btn-warning" onclick="openDenomModal()">Denom</button>
+                    </div>
+                </div>
+                <div class="dash-card dash-card-closing">
+                    <label>Closing Balance</label>
+                    <div class="value" id="dashClosingBalance">₹0.00</div>
+                </div>
+            </div>
+
+            <!-- Staff Advance & Salary Tracking Module -->
+            <div class="staff-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0; color: var(--text-main); font-size: 0.8rem; text-transform: uppercase;">Staff Advance & Salary Tracking</h3>
+                    <button class="btn btn-action" style="font-size: 0.8rem; padding: 4px 10px;" onclick="openAddStaffModal()">+ Add Staff</button>
+                </div>
+
+                <!-- Staff Selector Tabs -->
+                <div id="staffSelectorTabs">
+                    <!-- Dynamically populated staff buttons -->
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.9rem; color: var(--secondary);">
+                    <div>
+                        Active Staff: <strong id="activeStaffName" style="color: var(--text-main);">None</strong> | 
+                        Advance Balance: <strong id="activeStaffBalance" style="color: var(--danger);">₹0.00</strong>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn btn-warning" style="font-size: 0.75rem; padding: 3px 8px;" onclick="renameActiveStaff()">Rename</button>
+                        <button class="btn btn-danger" style="font-size: 0.75rem; padding: 3px 8px;" onclick="deleteActiveStaff()">Delete Staff</button>
+                    </div>
+                </div>
+
+                <form id="staffTransactionForm" onsubmit="addStaffTransaction(event)" style="grid-template-columns: 130px 1fr 120px 130px auto; margin-bottom: 12px;">
+                    <div class="form-group">
+                        <input type="date" id="staffTxDate" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="staffTxDesc" placeholder="Narration (e.g. Weekly Advance)" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="staffTxAmount" placeholder="Amount" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="staffTxType">
+                            <option value="advance">Given Advance</option>
+                            <option value="repayment">Repayment/Salary Ded.</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-action" style="height: 35px;">Add Entry</button>
+                </form>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Narration</th>
+                                <th>Type</th>
+                                <th>Amount (₹)</th>
+                                <th>Balance (₹)</th>
+                                <th style="width: 80px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staffTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <main class="main-content" id="historyView" style="display: none;">
+            <div class="summary-card">
+                <div>Day History Records</div>
+            </div>
+            <div id="historyListContainer"></div>
+        </main>
+    </div>
+</div>
+
+<!-- DEDICATED PRINT STATEMENT SHEET (Visible only during print) -->
+<div id="printStatementSheet">
+    <div class="print-header">
+        <h2>Pannippara Store - Account Statement</h2>
+        <p>Daily Closing System</p>
+    </div>
+    <div class="print-meta">
+        <div><strong>Account Name:</strong> <span id="printAccName"></span></div>
+        <div><strong>Period:</strong> <span id="printDateRange"></span></div>
+    </div>
+    <table class="print-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Amount (₹)</th>
+                <th>Balance (₹)</th>
+            </tr>
+        </thead>
+        <tbody id="printTableBody"></tbody>
+    </table>
+    <div class="print-footer">
+        <div>Authorized Signatory</div>
+        <div>Closing Balance: <strong id="printClosingBal"></strong></div>
+    </div>
+</div>
+
+<div id="addBorrowerModal" class="modal">
+    <div class="modal-content">
+        <h3>Add New Account</h3>
+        <input type="text" id="newBorrowerName" placeholder="Account Name" required>
+        <div class="modal-actions">
+            <button class="btn btn-warning" onclick="document.getElementById('addBorrowerModal').style.display = 'none'">Cancel</button>
+            <button class="btn btn-success" onclick="addNewBorrower()">Save</button>
         </div>
+    </div>
+</div>
 
-        <div class="card">
-          <div class="card-title">Registered Fleet</div>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Vehicle Number</th>
-                  <th>Capacity</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="fleetTableRows"></tbody>
-            </table>
-          </div>
+<!-- Add Staff Modal -->
+<div id="addStaffModal" class="modal">
+    <div class="modal-content">
+        <h3>Add New Staff Member</h3>
+        <input type="text" id="newStaffNameInput" placeholder="Staff Name" required>
+        <div class="modal-actions">
+            <button class="btn btn-warning" onclick="document.getElementById('addStaffModal').style.display = 'none'">Cancel</button>
+            <button class="btn btn-success" onclick="addNewStaffMember()">Save</button>
         </div>
-      </section>
+    </div>
+</div>
 
-      <!-- LEDGERS VIEW -->
-      <section id="viewLedgers" class="tab-view" style="display: none;">
-        <div class="card">
-          <div class="card-title">Create New Ledger Account</div>
-          <div class="form-group">
-            <label for="newLedgerName">Ledger Account Title</label>
-            <input type="text" id="newLedgerName" placeholder="e.g. Customer A, Main Cash" maxlength="40" />
-          </div>
-          <button class="btn btn-success" id="btnAddLedger">Create Ledger Cloud Doc</button>
+<div id="denomModal" class="modal">
+    <div class="modal-content" style="width: 360px;">
+        <h3>Denomination Calculator</h3>
+        <div class="denom-grid">
+            <label>₹500</label><input type="number" class="denom-count" data-denom="500" min="0" placeholder="0" oninput="updateDenomCalc()"><div class="denom-total" id="denom-total-500">₹0.00</div>
+            <label>₹200</label><input type="number" class="denom-count" data-denom="200" min="0" placeholder="0" oninput="updateDenomCalc()"><div class="denom-total" id="denom-total-200">₹0.00</div>
+            <label>₹100</label><input type="number" class="denom-count" data-denom="100" min="0" placeholder="0" oninput="updateDenomCalc()"><div class="denom-total" id="denom-total-100">₹0.00</div>
+            <label>₹50</label><input type="number" class="denom-count" data-denom="50" min="0" placeholder="0" oninput="updateDenomCalc()"><div class="denom-total" id="denom-total-50">₹0.00</div>
+            <label>₹20</label><input type="number" class="denom-count" data-denom="20" min="0" placeholder="0" oninput="updateDenomCalc()"><div class="denom-total" id="denom-total-20">₹0.00</div>
+            <label>₹10</label><input type="number" class="denom-count" data-denom="10" min="0" placeholder="0" oninput="updateDenomCalc()"><div class="denom-total" id="denom-total-10">₹0.00</div>
+            
+            <div style="grid-column: span 2; text-align: right; font-weight: bold; margin-top: 6px;">TOTAL:</div>
+            <div class="denom-total" id="denom-grand-total" style="color: var(--danger); margin-top: 6px;">₹0.00</div>
         </div>
-
-        <div class="card">
-          <div class="card-title">Active Ledgers</div>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Ledger Name</th>
-                  <th>Firestore ID</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="ledgerMasterRows"></tbody>
-            </table>
-          </div>
+        <div class="modal-actions" style="border-top: 1px solid var(--border); padding-top: 10px; margin-top: 12px;">
+            <button class="btn btn-warning" onclick="document.getElementById('denomModal').style.display = 'none'">Cancel</button>
+            <button class="btn btn-success" onclick="applyDenomination()">Apply</button>
         </div>
-      </section>
+    </div>
+</div>
 
-    </main>
-
-    <nav class="bottom-nav">
-      <button class="nav-item active" id="navEntry">
-        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-        <span>Entry</span>
-      </button>
-      <button class="nav-item" id="navReports">
-        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-        <span>Reports</span>
-      </button>
-      <button class="nav-item" id="navFleet">
-        <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-        <span>Fleet</span>
-      </button>
-      <button class="nav-item" id="navLedgers">
-        <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
-        <span>Ledgers</span>
-      </button>
-    </nav>
-  </div>
-
-  <div class="toast" id="toastMsg">Initializing...</div>
-
-  <!-- APPLICATION SCRIPT MODULE -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {  
-      getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, enableIndexedDbPersistence 
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import {  
-      getAuth, signInAnonymously, onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
-      });
-    }
-
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const installBtn = document.getElementById('btnInstallPWA');
-      if (installBtn) installBtn.style.display = 'inline-flex';
-    });
-
-    document.getElementById('btnInstallPWA')?.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') showToast('App installed successfully!');
-      deferredPrompt = null;
-      document.getElementById('btnInstallPWA').style.display = 'none';
-    });
-
-    function escapeHTML(str) {
-      return String(str ?? '').replace(/[&<>"']/g, match => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[match]));
-    }
+<!-- Firebase SDKs -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBz_Eq9mnHKvFfqmcwP-4qY04RUBF8b2Ec",
-      authDomain: "mypro-7bcac.firebaseapp.com",
-      projectId: "mypro-7bcac",
-      storageBucket: "mypro-7bcac.firebasestorage.app",
-      messagingSenderId: "594687962350",
-      appId: "1:594687962350:web:3eca3472cb8a25d3ed57ff",
-      measurementId: "G-NSSW4QH20R"
+        apiKey: "AIzaSyCPlDar1jjkuhidq2dEM81xFAS-8zasD2s",
+        authDomain: "closingwindow-e194e.firebaseapp.com",
+        projectId: "closingwindow-e194e",
+        storageBucket: "closingwindow-e194e.firebasestorage.app",
+        messagingSenderId: "143046176342",
+        appId: "1:143046176342:web:d97eada0d84634275e15f7"
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    enableIndexedDbPersistence(db).catch(() => {});
     const auth = getAuth(app);
+    const db = getFirestore(app);
+    const docRef = doc(db, "appData", "pannipparaStore");
 
-    let trips = [];
-    let ledgers = [];
-    let fleet = [];
-    let editingTripId = null;
+    let ledgers = { 'Jaleel': [], 'Rejin': [], 'Imdad': [] };
+    let staffLedgers = { 'Rahul': [] };
+    let activeStaff = 'Rahul';
+    let dayHistory = []; 
+    let totalDenomValue = 0;
+    let firestoreSaveTimeout = null;
+    let showOpeningBalance = true;
 
-    const tripsCol = collection(db, "trips");
-    const ledgersCol = collection(db, "ledgers");
-    const fleetCol = collection(db, "fleet");
+    let activeBorrower = 'Jaleel';
+    let currentTab = 'dashboard';
+    let unsubscribeSnapshot = null;
 
-    // AUTO-TRIGGER NATIVE BIOMETRIC POPUP ON LOAD
-    async function triggerBiometricUnlock() {
-      try {
-        if (!window.PublicKeyCredential) return;
+    function showToast(message) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        container.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 50);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 2500);
+    }
 
-        const challenge = new Uint8Array(32);
-        window.crypto.getRandomValues(challenge);
-        const userId = new Uint8Array(16);
-        window.crypto.getRandomValues(userId);
+    function capitalizeFirstLetter(val) {
+        if (!val) return "";
+        return val.charAt(0).toUpperCase() + val.slice(1);
+    }
 
-        const credIdKey = "mujeeb_passkey_credential_id";
-        let existingCredId = localStorage.getItem(credIdKey);
+    document.addEventListener('input', function(e) {
+        if (e.target && e.target.type === 'text') {
+            const start = e.target.selectionStart;
+            const end = e.target.selectionEnd;
+            e.target.value = capitalizeFirstLetter(e.target.value);
+            e.target.setSelectionRange(start, end);
+        }
+    });
 
-        if (!existingCredId) {
-          const newCredential = await navigator.credentials.create({
-            publicKey: {
-              challenge: challenge,
-              rp: { name: "Mujeeb Fleet Manager", id: window.location.hostname },
-              user: {
-                id: userId,
-                name: "mujeeb@fleet.app",
-                displayName: "Mujeeb Fleet Owner"
-              },
-              pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
-              authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
-              timeout: 60000
+    document.getElementById('transactionForm').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const focusables = Array.from(this.querySelectorAll('input, select, button'));
+            const index = focusables.indexOf(e.target);
+            if (index > -1 && index < focusables.length - 1) {
+                e.preventDefault();
+                focusables[index + 1].focus();
             }
-          });
-          const base64CredId = btoa(String.fromCharCode(...new Uint8Array(newCredential.rawId)));
-          localStorage.setItem(credIdKey, base64CredId);
+        }
+    });
+
+    document.getElementById('staffTransactionForm').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const focusables = Array.from(this.querySelectorAll('input, select, button'));
+            const index = focusables.indexOf(e.target);
+            if (index > -1 && index < focusables.length - 1) {
+                e.preventDefault();
+                focusables[index + 1].focus();
+            }
+        }
+    });
+
+    window.onload = async function() {
+        const savedEmail = localStorage.getItem('dc_email');
+        const savedPass = localStorage.getItem('dc_pass');
+        if (savedEmail && savedPass) {
+            document.getElementById('authEmailInput').value = savedEmail;
+            document.getElementById('authPasswordInput').value = savedPass;
+            document.getElementById('rememberMe').checked = true;
         }
 
-        let allowCreds = [];
-        if (existingCredId) {
-          const rawId = Uint8Array.from(atob(existingCredId), c => c.charCodeAt(0));
-          allowCreds = [{ type: "public-key", id: rawId }];
-        }
+        const savedTheme = localStorage.getItem('dc_theme') || 'light';
+        setTheme(savedTheme);
 
-        await navigator.credentials.get({
-          publicKey: {
-            challenge: challenge,
-            allowCredentials: allowCreds,
-            userVerification: "required",
-            timeout: 60000
-          }
+        const todayStr = getISODate();
+        const startEl = document.getElementById('filterStartDate');
+        const endEl = document.getElementById('filterEndDate');
+        if (startEl) startEl.value = todayStr;
+        if (endEl) endEl.value = todayStr;
+
+        try {
+            const snap = await getDoc(docRef);
+            if (snap.exists() && snap.data().dayHistory) {
+                dayHistory = snap.data().dayHistory;
+            }
+        } catch(e) {
+            console.error("Error fetching initial history", e);
+        }
+    };
+
+    window.toggleTheme = function() {
+        const currentTheme = document.body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+    }
+
+    function setTheme(theme) {
+        document.body.setAttribute('data-theme', theme);
+        localStorage.setItem('dc_theme', theme);
+        const btn = document.getElementById('themeToggleBtn');
+        if (btn) {
+            btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+    }
+
+    const getISODate = (dateObj = new Date()) => dateObj.toISOString().split('T')[0];
+    document.getElementById('txDate').value = getISODate();
+    document.getElementById('staffTxDate').value = getISODate();
+
+    function formatDateDisplay(isoDateStr) {
+        if (!isoDateStr) return "";
+        if (isoDateStr.includes('-')) {
+            const parts = isoDateStr.split('-');
+            if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        return isoDateStr;
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            document.getElementById('homePageWrapper').style.display = 'flex';
+            document.getElementById('mainAppContainer').style.display = 'none';
+            if (unsubscribeSnapshot) unsubscribeSnapshot();
+        }
+    });
+
+    window.loginApp = async function(e) {
+        if (e) e.preventDefault(); 
+        
+        const email = document.getElementById('authEmailInput').value.trim();
+        const password = document.getElementById('authPasswordInput').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
+        const errorMsg = document.getElementById('authErrorMsg');
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            errorMsg.style.display = 'none';
+            
+            if (rememberMe) {
+                localStorage.setItem('dc_email', email);
+                localStorage.setItem('dc_pass', password);
+            } else {
+                localStorage.removeItem('dc_email');
+                localStorage.removeItem('dc_pass');
+            }
+
+            document.getElementById('homePageWrapper').style.display = 'none';
+            document.getElementById('mainAppContainer').style.display = 'block';
+            
+            startFirestoreListener();
+            showToast("Successfully logged in.");
+        } catch (error) {
+            errorMsg.style.display = 'block';
+        }
+    }
+
+    window.logoutApp = function() {
+        signOut(auth).then(() => {
+            window.location.reload(); 
+        });
+    }
+
+    function startFirestoreListener() {
+        unsubscribeSnapshot = onSnapshot(docRef, async (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                ledgers = data.ledgers || ledgers;
+                staffLedgers = data.staffLedgers || staffLedgers;
+                
+                if (data.dayHistory && dayHistory.length === 0) {
+                    dayHistory = data.dayHistory;
+                }
+
+                if (!ledgers[activeBorrower]) {
+                    activeBorrower = Object.keys(ledgers)[0] || 'Jaleel';
+                }
+                
+                document.getElementById('activeBorrowerName').innerText = activeBorrower;
+                renderSidebar();
+                
+                if (currentTab === 'ledgers' || currentTab === 'ledger') renderLedger();
+                else if (currentTab === 'dashboard') updateDashboard();
+                else if (currentTab === 'history') renderDayHistory();
+            } else {
+                await saveToFirestoreImmediate();
+            }
+        });
+    }
+
+    function saveToFirestore() {
+        if (firestoreSaveTimeout) clearTimeout(firestoreSaveTimeout);
+        firestoreSaveTimeout = setTimeout(async () => {
+            try {
+                await setDoc(docRef, { ledgers, staffLedgers }, { merge: true });
+            } catch (error) {
+                console.error("Firestore write error: ", error);
+            }
+        }, 1000);
+    }
+
+    async function saveToFirestoreImmediate() {
+        if (firestoreSaveTimeout) clearTimeout(firestoreSaveTimeout);
+        try {
+            await setDoc(docRef, { ledgers, staffLedgers }, { merge: true });
+        } catch (error) {
+            console.error("Firestore write error: ", error);
+        }
+    }
+
+    async function saveToFirestoreWithHistory() {
+        if (firestoreSaveTimeout) clearTimeout(firestoreSaveTimeout);
+        try {
+            await setDoc(docRef, { ledgers, dayHistory, staffLedgers }, { merge: true });
+        } catch (error) {
+            console.error("Firestore history write error: ", error);
+        }
+    }
+
+    window.formatINR = function(amount) {
+        if (isNaN(amount)) return "";
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+    }
+
+    function calculateAccountBalance(person) {
+        let bal = 0;
+        (ledgers[person] || []).forEach(item => {
+            if (item.type === 'borrowed') bal += item.amount;
+            else bal -= item.amount;
+        });
+        return bal;
+    }
+
+    function renderSidebar() {
+        const selector = document.getElementById('borrowerList');
+        const fragment = document.createDocumentFragment();
+        let totalAcrossAccounts = 0;
+
+        Object.keys(ledgers).forEach(name => {
+            const accountBal = calculateAccountBalance(name);
+            totalAcrossAccounts += accountBal;
+
+            const btn = document.createElement('button');
+            btn.className = `btn-tab ${name === activeBorrower && (currentTab === 'ledgers' || currentTab === 'ledger') ? 'active' : ''}`;
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = name;
+            nameSpan.style.overflow = 'hidden';
+            nameSpan.style.textOverflow = 'ellipsis';
+            nameSpan.style.whiteSpace = 'nowrap';
+
+            const balSpan = document.createElement('span');
+            balSpan.className = 'account-bal';
+            balSpan.textContent = formatINR(accountBal);
+
+            btn.appendChild(nameSpan);
+            btn.appendChild(balSpan);
+            btn.onclick = () => { switchTab('ledgers'); switchBorrower(name); };
+            fragment.appendChild(btn);
         });
 
-        initializeDatabaseListeners();
-      } catch (err) {
-        console.error("Biometric bypass or cancellation:", err);
-        // Fallback: load app anyway if biometric prompt is cancelled or unavailable
-        initializeDatabaseListeners();
-      }
+        selector.innerHTML = '';
+        selector.appendChild(fragment);
+        document.getElementById('sidebarGrandTotal').textContent = formatINR(totalAcrossAccounts);
     }
 
-    function initializeDatabaseListeners() {
-      signInAnonymously(auth).catch((error) => {
-        showToast("Auth Error: " + escapeHTML(error.message));
-      });
+    window.switchTab = function(tab) {
+        currentTab = tab;
+        document.getElementById('ledgerView').style.display = 'none';
+        document.getElementById('dashboardView').style.display = 'none';
+        document.getElementById('historyView').style.display = 'none';
+        document.getElementById('ledgersSection').style.display = 'none';
 
-      onAuthStateChanged(auth, (user) => {
-        const syncStatus = document.getElementById("syncStatus");
-        if (user) {
-          syncStatus.innerText = "Live Cloud Active";
-          syncStatus.classList.add("active");
-        } else {
-          syncStatus.innerText = "Disconnected";
-          syncStatus.classList.remove("active");
+        document.getElementById('nav-dashboard').className = 'btn-nav' + (tab === 'dashboard' ? ' active' : '');
+        document.getElementById('nav-ledgers').className = 'btn-nav' + (tab === 'ledgers' ? ' active' : '');
+        document.getElementById('nav-history').className = 'btn-nav' + (tab === 'history' ? ' active' : '');
+
+        if (tab === 'dashboard') {
+            document.getElementById('dashboardView').style.display = 'flex';
+            updateDashboard();
+        } else if (tab === 'ledgers' || tab === 'ledger') {
+            document.getElementById('ledgersSection').style.display = 'block';
+            document.getElementById('ledgerView').style.display = 'flex';
+            
+            const todayStr = getISODate();
+            document.getElementById('filterStartDate').value = todayStr;
+            document.getElementById('filterEndDate').value = todayStr;
+
+            renderLedger();
+        } else if (tab === 'history') {
+            document.getElementById('historyView').style.display = 'flex';
+            renderDayHistory();
         }
-      });
-
-      onSnapshot(ledgersCol, (snapshot) => {
-        ledgers = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        if (ledgers.length === 0) addDoc(ledgersCol, { name: "Main General Ledger" });
-        syncDropdowns();
-        renderLedgerMaster();
-        renderReports();
-      });
-
-      onSnapshot(tripsCol, (snapshot) => {
-        trips = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderReports();
-        syncDropdowns();
-      });
-
-      onSnapshot(fleetCol, (snapshot) => {
-        fleet = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderFleet();
-        syncDropdowns();
-      });
+        renderSidebar();
     }
 
-    function showToast(msg) {
-      const toast = document.getElementById("toastMsg");
-      toast.innerText = msg;
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 2800);
+    window.switchBorrower = function(name) {
+        activeBorrower = name;
+        document.getElementById('activeBorrowerName').textContent = name;
+        
+        const todayStr = getISODate();
+        document.getElementById('filterStartDate').value = todayStr;
+        document.getElementById('filterEndDate').value = todayStr;
+        
+        renderSidebar();
+        renderLedger();
     }
 
-    function switchView(viewName) {
-      document.querySelectorAll(".tab-view").forEach(el => el.style.display = "none");
-      document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
-      document.getElementById("view" + viewName.charAt(0).toUpperCase() + viewName.slice(1)).style.display = "block";
-      document.getElementById("nav" + viewName.charAt(0).toUpperCase() + viewName.slice(1)).classList.add("active");
+    window.openAddAccountModal = function() {
+        document.getElementById('addBorrowerModal').style.display = 'flex';
+        document.getElementById('newBorrowerName').focus();
     }
 
-    document.getElementById("navEntry").addEventListener("click", () => switchView("entry"));
-    document.getElementById("navReports").addEventListener("click", () => switchView("reports"));
-    document.getElementById("navFleet").addEventListener("click", () => switchView("fleet"));
-    document.getElementById("navLedgers").addEventListener("click", () => switchView("ledgers"));
-    document.getElementById("btnGoLedgers").addEventListener("click", () => switchView("ledgers"));
-    document.getElementById("filterLedger").addEventListener("change", () => renderReports());
-    document.getElementById("filterVehicle").addEventListener("change", () => renderReports());
+    window.addNewBorrower = function() {
+        const nameInput = document.getElementById('newBorrowerName');
+        const name = capitalizeFirstLetter(nameInput.value.trim());
+        if(name && !ledgers[name]) {
+            ledgers[name] = [];
+            saveToFirestoreImmediate();
+            switchTab('ledgers');
+            switchBorrower(name);
+            nameInput.value = '';
+            document.getElementById('addBorrowerModal').style.display = 'none';
+            showToast(`Account "${name}" created.`);
+        } else {
+            showToast("Please enter a unique valid account name.");
+        }
+    }
+
+    window.renameActiveAccount = async function() {
+        const oldName = activeBorrower;
+        const newName = prompt("Enter new account name:", oldName);
+        if (newName === null) return;
+        const trimmedName = capitalizeFirstLetter(newName.trim());
+        
+        if (!trimmedName) {
+            showToast("Account name cannot be empty.");
+            return;
+        }
+        if (trimmedName === oldName) return;
+        if (ledgers[trimmedName]) {
+            showToast("An account with this name already exists.");
+            return;
+        }
+
+        ledgers[trimmedName] = ledgers[oldName];
+        delete ledgers[oldName];
+        activeBorrower = trimmedName;
+
+        try {
+            await setDoc(docRef, {
+                ledgers: {
+                    [oldName]: deleteField(),
+                    [trimmedName]: ledgers[trimmedName]
+                }
+            }, { merge: true });
+        } catch (error) {
+            console.error("Firestore rename error: ", error);
+        }
+
+        document.getElementById('activeBorrowerName').textContent = activeBorrower;
+        renderSidebar();
+        renderLedger();
+        showToast("Account renamed successfully.");
+    }
+
+    window.addTransaction = function(e) {
+        e.preventDefault();
+        const date = document.getElementById('txDate').value || getISODate();
+        const desc = capitalizeFirstLetter(document.getElementById('txDesc').value.trim());
+        const amount = parseFloat(document.getElementById('txAmount').value);
+        const type = document.getElementById('txType').value;
+
+        if(!ledgers[activeBorrower]) ledgers[activeBorrower] = [];
+        ledgers[activeBorrower].push({ id: Date.now(), date, desc, amount, type });
+        saveToFirestore();
+        document.getElementById('txDesc').value = '';
+        document.getElementById('txAmount').value = '';
+        document.getElementById('txDesc').focus();
+        renderLedger();
+        renderSidebar();
+        showToast("Entry added.");
+    }
+
+    window.clearFilters = function() {
+        const todayStr = getISODate();
+        document.getElementById('filterStartDate').value = todayStr;
+        document.getElementById('filterEndDate').value = todayStr;
+        renderLedger();
+        showToast("Filters reset to present day.");
+    }
+
+    window.toggleOpeningBalanceView = function() {
+        showOpeningBalance = !showOpeningBalance;
+        const btn = document.getElementById('toggleOpeningBalBtn');
+        if (btn) {
+            btn.textContent = `Opening Bal: ${showOpeningBalance ? 'ON' : 'OFF'}`;
+            btn.className = `btn ${showOpeningBalance ? 'btn-success' : 'btn-warning'}`;
+        }
+        renderLedger();
+    }
+
+    window.renderLedger = function() {
+        const tbody = document.getElementById('ledgerBody');
+        const fragment = document.createDocumentFragment();
+        
+        let entries = ledgers[activeBorrower] || [];
+        const startDate = document.getElementById('filterStartDate').value;
+        const endDate = document.getElementById('filterEndDate').value;
+
+        let openingBalance = 0;
+        let filteredEntries = [];
+
+        entries.forEach(item => {
+            if (startDate && item.date < startDate) {
+                if (item.type === 'borrowed') openingBalance += item.amount;
+                else openingBalance -= item.amount;
+            } else if ((!startDate || item.date >= startDate) && (!endDate || item.date <= endDate)) {
+                filteredEntries.push(item);
+            }
+        });
+
+        let totalRunningBal = 0;
+        entries.forEach(item => {
+            if (item.type === 'borrowed') totalRunningBal += item.amount;
+            else totalRunningBal -= item.amount;
+        });
+
+        document.getElementById('totalBalance').textContent = formatINR(totalRunningBal);
+
+        let runningBalance = openingBalance;
+        let processedEntries = filteredEntries.map(item => {
+            if (item.type === 'borrowed') runningBalance += item.amount;
+            else runningBalance -= item.amount;
+            return { ...item, balanceAfter: runningBalance };
+        });
+
+        if (showOpeningBalance) {
+            const tr = document.createElement('tr');
+            tr.style.backgroundColor = 'var(--border)';
+            tr.innerHTML = `
+                <td>${startDate ? formatDateDisplay(startDate) : '-'}</td>
+                <td><strong>Opening Balance</strong></td>
+                <td>-</td>
+                <td>-</td>
+                <td><strong>${formatINR(openingBalance)}</strong></td>
+                <td>-</td>
+            `;
+            fragment.appendChild(tr);
+        }
+
+        processedEntries.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${formatDateDisplay(item.date)}</td>
+                <td>${item.desc}</td>
+                <td class="type-${item.type}">${item.type === 'borrowed' ? 'Given' : 'Received'}</td>
+                <td>${formatINR(item.amount)}</td>
+                <td><strong>${formatINR(item.balanceAfter)}</strong></td>
+                <td class="actions-cell">
+                    <button class="btn btn-warning btn-icon" style="width: 28px; height: 28px;" onclick="editTransaction(${item.id})" title="Edit">
+                        <svg viewBox="0 0 24 24" width="13" height="13"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                    </button>
+                    <button class="btn btn-danger btn-icon" style="width: 28px; height: 28px;" onclick="deleteTransaction(${item.id})" title="Delete">
+                        <svg viewBox="0 0 24 24" width="13" height="13"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    </button>
+                </td>
+            `;
+            fragment.appendChild(tr);
+        });
+        tbody.innerHTML = '';
+        tbody.appendChild(fragment);
+    }
+
+    window.printLedgerStatement = function() {
+        const printAccName = document.getElementById('printAccName');
+        const printDateRange = document.getElementById('printDateRange');
+        const printTableBody = document.getElementById('printTableBody');
+        const printClosingBal = document.getElementById('printClosingBal');
+
+        printAccName.textContent = activeBorrower;
+        const start = document.getElementById('filterStartDate').value;
+        const end = document.getElementById('filterEndDate').value;
+        printDateRange.textContent = (start || end) ? `${formatDateDisplay(start) || 'Beginning'} to ${formatDateDisplay(end) || 'Present'}` : 'All Time';
+
+        let entries = ledgers[activeBorrower] || [];
+        let openingBalance = 0;
+        let filteredEntries = [];
+
+        entries.forEach(item => {
+            if (start && item.date < start) {
+                if (item.type === 'borrowed') openingBalance += item.amount;
+                else openingBalance -= item.amount;
+            } else if ((!start || item.date >= start) && (!end || item.date <= end)) {
+                filteredEntries.push(item);
+            }
+        });
+
+        let runningBalance = openingBalance;
+        let processedEntries = filteredEntries.map(item => {
+            if (item.type === 'borrowed') runningBalance += item.amount;
+            else runningBalance -= item.amount;
+            return { ...item, balanceAfter: runningBalance };
+        });
+
+        let fragment = document.createDocumentFragment();
+
+        if (showOpeningBalance) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${start ? formatDateDisplay(start) : '-'}</td>
+                <td><strong>Opening Balance</strong></td>
+                <td>-</td>
+                <td>-</td>
+                <td><strong>${formatINR(openingBalance)}</strong></td>
+            `;
+            fragment.appendChild(tr);
+        }
+
+        processedEntries.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${formatDateDisplay(item.date)}</td>
+                <td>${item.desc}</td>
+                <td>${item.type === 'borrowed' ? 'Given' : 'Received'}</td>
+                <td>${formatINR(item.amount)}</td>
+                <td><strong>${formatINR(item.balanceAfter)}</strong></td>
+            `;
+            fragment.appendChild(tr);
+        });
+
+        printTableBody.innerHTML = '';
+        printTableBody.appendChild(fragment);
+
+        printClosingBal.textContent = formatINR(runningBalance);
+
+        window.print();
+    }
+
+    window.editTransaction = function(id) {
+        const item = ledgers[activeBorrower].find(i => i.id === id);
+        if (!item) return;
+
+        const newDesc = prompt("Description:", item.desc);
+        if (newDesc === null) return; 
+
+        const newAmountStr = prompt("Amount (₹):", item.amount);
+        if (newAmountStr === null) return; 
+
+        const newAmount = parseFloat(newAmountStr);
+        
+        if (!isNaN(newAmount) && newDesc.trim() !== '') {
+            item.desc = capitalizeFirstLetter(newDesc.trim());
+            item.amount = newAmount;
+            saveToFirestoreImmediate();
+            renderLedger();
+            renderSidebar();
+            showToast("Transaction updated.");
+        } else {
+            showToast("Invalid input provided.");
+        }
+    }
+
+    window.deleteTransaction = function(id) {
+        if (confirm("Delete entry?")) {
+            ledgers[activeBorrower] = ledgers[activeBorrower].filter(item => item.id !== id);
+            saveToFirestoreImmediate();
+            renderLedger();
+            renderSidebar();
+            showToast("Entry deleted.");
+        }
+    }
     
-    document.getElementById("quantity").addEventListener("input", calculateTotals);
-    document.getElementById("buyRate").addEventListener("input", calculateTotals);
-    document.getElementById("sellRate").addEventListener("input", calculateTotals);
-
-    function syncDropdowns() {
-      const entrySelect = document.getElementById("entryLedger");
-      const filterSelect = document.getElementById("filterLedger");
-      const vehicleFilter = document.getElementById("filterVehicle");
-      const vehicleDatalist = document.getElementById("vehicleDatalist");
-
-      const selectedEntry = entrySelect.value;
-      const selectedFilter = filterSelect.value;
-      const selectedVehFilter = vehicleFilter.value;
-
-      entrySelect.innerHTML = "";
-      filterSelect.innerHTML = '<option value="ALL">All Ledgers Combined</option>';
-      ledgers.forEach(l => {
-        entrySelect.add(new Option(l.name, l.id));
-        filterSelect.add(new Option(l.name, l.id));
-      });
-
-      if (selectedEntry) entrySelect.value = selectedEntry;
-      if (selectedFilter) filterSelect.value = selectedFilter;
-
-      vehicleDatalist.innerHTML = "";
-      vehicleFilter.innerHTML = '<option value="ALL">All Vehicles</option>';
-      const allVehicles = [...new Set([
-        ...fleet.map(f => (f.vehicleNo || "").toUpperCase()),
-        ...trips.map(t => (t.vehicleNo || "").toUpperCase())
-      ])].filter(Boolean);
-
-      allVehicles.forEach(v => {
-        vehicleDatalist.appendChild(new Option(v, v));
-        vehicleFilter.add(new Option(v, v));
-      });
-
-      if (selectedVehFilter) vehicleFilter.value = selectedVehFilter;
-    }
-
-    function calculateTotals() {
-      const qty = Math.abs(parseFloat(document.getElementById("quantity").value)) || 0;
-      const buyRate = Math.abs(parseFloat(document.getElementById("buyRate").value)) || 0;
-      const sellRate = Math.abs(parseFloat(document.getElementById("sellRate").value)) || 0;
-      if (qty > 0 && buyRate >= 0) document.getElementById("buyVal").value = (qty * buyRate).toFixed(2);
-      if (qty > 0 && sellRate >= 0) document.getElementById("sellVal").value = (qty * sellRate).toFixed(2);
-    }
-
-    document.getElementById("btnSaveTrip").addEventListener("click", async () => {
-      const ledgerId = document.getElementById("entryLedger").value;
-      const date = document.getElementById("tripDate").value;
-      const vehicleNo = document.getElementById("vehicleNo").value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
-      const item = document.getElementById("loadItem").value.trim();
-      const quantity = Math.abs(parseFloat(document.getElementById("quantity").value)) || 0;
-      const buyRate = Math.abs(parseFloat(document.getElementById("buyRate").value)) || 0;
-      const sellRate = Math.abs(parseFloat(document.getElementById("sellRate").value)) || 0;
-      const buy = Math.abs(parseFloat(document.getElementById("buyVal").value)) || (quantity * buyRate);
-      const sell = Math.abs(parseFloat(document.getElementById("sellVal").value)) || (quantity * sellRate);
-
-      if (!ledgerId || !vehicleNo || !item) {
-        showToast("Fill in Ledger, Vehicle, and Cargo!");
-        return;
-      }
-
-      const payload = { ledgerId, date, vehicleNo, item, quantity, buyRate, sellRate, buy, sell };
-
-      try {
-        if (editingTripId) {
-          await updateDoc(doc(db, "trips", editingTripId), payload);
-          showToast("Updated securely.");
-        } else {
-          await addDoc(tripsCol, payload);
-          showToast("Saved & Synced.");
+    window.deleteCurrentAccount = async function() {
+        const currentBalance = calculateAccountBalance(activeBorrower);
+        
+        if (Math.abs(currentBalance) > 0.001) {
+            showToast(`Cannot delete account with active balance of ${formatINR(currentBalance)}.`);
+            return;
         }
-        resetEntryForm();
-        switchView("reports");
-      } catch (err) {
-        showToast("Save Error: " + escapeHTML(err.message));
-      }
-    });
 
-    function resetEntryForm() {
-      editingTripId = null;
-      document.getElementById("tripDate").valueAsDate = new Date();
-      document.getElementById("vehicleNo").value = "";
-      document.getElementById("loadItem").value = "";
-      document.getElementById("quantity").value = "";
-      document.getElementById("buyRate").value = "";
-      document.getElementById("sellRate").value = "";
-      document.getElementById("buyVal").value = "";
-      document.getElementById("sellVal").value = "";
-      document.getElementById("btnSaveTrip").innerText = "Save Record";
-      document.getElementById("btnCancelEdit").style.display = "none";
-    }
-    document.getElementById("btnCancelEdit").addEventListener("click", resetEntryForm);
+        if (confirm(`Delete account ${activeBorrower}?`)) {
+            const accountToDelete = activeBorrower;
+            delete ledgers[accountToDelete];
 
-    function renderReports() {
-      const tbody = document.getElementById("tripReportRows");
-      tbody.innerHTML = "";
+            try {
+                await setDoc(docRef, {
+                    ledgers: {
+                        [accountToDelete]: deleteField()
+                    }
+                }, { merge: true });
+            } catch (error) {
+                console.error("Firestore delete error: ", error);
+            }
 
-      const selectedLedger = document.getElementById("filterLedger").value;
-      const selectedVehicle = document.getElementById("filterVehicle").value;
-
-      const filtered = trips.filter(t => {
-        const matchLedger = (selectedLedger === "ALL" || t.ledgerId === selectedLedger);
-        const matchVehicle = (selectedVehicle === "ALL" || t.vehicleNo === selectedVehicle);
-        return matchLedger && matchVehicle;
-      });
-
-      let totBuy = 0, totSell = 0;
-
-      filtered.forEach(t => {
-        const buy = t.buy || 0;
-        const sell = t.sell || 0;
-        const profit = sell - buy;
-        totBuy += buy;
-        totSell += sell;
-
-        const ledgerObj = ledgers.find(l => l.id === t.ledgerId);
-        const ledgerName = ledgerObj ? ledgerObj.name : "General";
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHTML(t.date || '-')}</td>
-          <td><strong>${escapeHTML(ledgerName)}</strong></td>
-          <td>${escapeHTML(t.vehicleNo)}</td>
-          <td>${escapeHTML(t.item)}</td>
-          <td>${escapeHTML(t.quantity)}</td>
-          <td class="val-expense">₹${buy.toFixed(2)}</td>
-          <td class="val-revenue">₹${sell.toFixed(2)}</td>
-          <td class="${profit >= 0 ? 'val-revenue' : 'val-expense'}" style="font-weight:bold;">₹${profit.toFixed(2)}</td>
-          <td>
-            <button class="action-btn-sm btn-edit" style="background:#f59e0b; color:#fff;" data-id="${escapeHTML(t.id)}">Edit</button>
-            <button class="action-btn-sm btn-del" style="background:#ef4444; color:#fff;" data-id="${escapeHTML(t.id)}">X</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      tbody.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.addEventListener('click', () => editTrip(btn.getAttribute('data-id')));
-      });
-      tbody.querySelectorAll('.btn-del').forEach(btn => {
-        btn.addEventListener('click', () => deleteTrip(btn.getAttribute('data-id')));
-      });
-
-      document.getElementById("summaryBuy").innerText = `₹${totBuy.toFixed(2)}`;
-      document.getElementById("summarySell").innerText = `₹${totSell.toFixed(2)}`;
-      document.getElementById("summaryProfit").innerText = `₹${(totSell - totBuy).toFixed(2)}`;
+            activeBorrower = Object.keys(ledgers)[0] || '';
+            renderSidebar();
+            if (activeBorrower) {
+                switchBorrower(activeBorrower);
+            } else {
+                document.getElementById('ledgerBody').innerHTML = '';
+                document.getElementById('totalBalance').textContent = '₹0.00';
+                document.getElementById('activeBorrowerName').textContent = 'None';
+            }
+            showToast("Account deleted.");
+        }
     }
 
-    function editTrip(id) {
-      const t = trips.find(item => item.id === id);
-      if (!t) return;
-      editingTripId = id;
-
-      document.getElementById("entryLedger").value = t.ledgerId;
-      document.getElementById("tripDate").value = t.date;
-      document.getElementById("vehicleNo").value = t.vehicleNo;
-      document.getElementById("loadItem").value = t.item;
-      document.getElementById("quantity").value = t.quantity;
-      document.getElementById("buyRate").value = t.buyRate;
-      document.getElementById("sellRate").value = t.sellRate;
-      document.getElementById("buyVal").value = t.buy;
-      document.getElementById("sellVal").value = t.sell;
-
-      document.getElementById("btnSaveTrip").innerText = "Update Cloud Record";
-      document.getElementById("btnCancelEdit").style.display = "block";
-      switchView("entry");
+    window.openDenomModal = function() {
+        document.getElementById('denomModal').style.display = 'flex';
     }
 
-    async function deleteTrip(id) {
-      if (confirm("Delete record permanently?")) {
-        await deleteDoc(doc(db, "trips", id));
-        showToast("Record deleted.");
-      }
+    window.updateDenomCalc = function() {
+        let currentTotal = 0;
+        const inputs = document.querySelectorAll('.denom-count');
+        
+        inputs.forEach(input => {
+            const count = parseInt(input.value) || 0;
+            const denom = parseInt(input.getAttribute('data-denom')) || 0;
+            const rowTotal = count * denom;
+            currentTotal += rowTotal;
+            document.getElementById(`denom-total-${denom}`).textContent = formatINR(rowTotal);
+        });
+        
+        totalDenomValue = currentTotal;
+        document.getElementById('denom-grand-total').textContent = formatINR(currentTotal);
     }
 
-    document.getElementById("btnSaveFleet").addEventListener("click", async () => {
-      const vNo = document.getElementById("fleetVehicleNo").value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
-      const cap = Math.abs(parseFloat(document.getElementById("fleetMaxCap").value)) || 0;
-      if (!vNo) {
-        showToast("Enter a valid vehicle number!");
-        return;
-      }
-      await addDoc(fleetCol, { vehicleNo: vNo, capacity: cap });
-      document.getElementById("fleetVehicleNo").value = "";
-      document.getElementById("fleetMaxCap").value = "";
-      showToast("Vehicle added to cloud.");
-    });
-
-    function renderFleet() {
-      const tbody = document.getElementById("fleetTableRows");
-      tbody.innerHTML = "";
-      fleet.forEach(f => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><strong>${escapeHTML(f.vehicleNo)}</strong></td>
-          <td>${escapeHTML(f.capacity)} Tons</td>
-          <td><button class="action-btn-sm btn-del-fleet" style="background:#ef4444; color:#fff;" data-id="${escapeHTML(f.id)}">Delete</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      tbody.querySelectorAll('.btn-del-fleet').forEach(btn => {
-        btn.addEventListener('click', () => deleteFleet(btn.getAttribute('data-id')));
-      });
+    window.applyDenomination = function() {
+        const cashInput = document.getElementById('cashInShelfInput');
+        cashInput.value = totalDenomValue;
+        document.getElementById('denomModal').style.display = 'none';
+        calculateClosingBalance();
+        showToast("Denomination total applied.");
     }
 
-    async function deleteFleet(id) {
-      if (confirm("Remove vehicle from fleet?")) {
-        await deleteDoc(doc(db, "fleet", id));
-        showToast("Vehicle removed.");
-      }
+    window.calculateClosingBalance = function() {
+        const dayClosing = parseFloat(document.getElementById('dayClosingInput').value) || 0;
+        const cashInShelf = parseFloat(document.getElementById('cashInShelfInput').value) || 0;
+        
+        let totalOutstanding = 0;
+        Object.keys(ledgers).forEach(person => {
+            totalOutstanding += calculateAccountBalance(person);
+        });
+
+        let totalStaffEntry = 0;
+        Object.keys(staffLedgers).forEach(name => {
+            totalStaffEntry += calculateStaffBalance(name);
+        });
+        document.getElementById('dashTotalStaffEntry').textContent = formatINR(totalStaffEntry);
+
+        const sbiVal = parseFloat(document.getElementById('sbiInput').value) || 0;
+        const phonePeVal = parseFloat(document.getElementById('phonePeInput').value) || 0;
+        const ownersHoldingsVal = parseFloat(document.getElementById('ownersHoldingsInput').value) || 0;
+
+        const combinedOutstanding = totalOutstanding + totalStaffEntry + sbiVal + phonePeVal + ownersHoldingsVal;
+        document.getElementById('dashCombinedOutstanding').textContent = formatINR(combinedOutstanding);
+
+        const closingBalance = (combinedOutstanding + cashInShelf) - dayClosing; 
+        document.getElementById('dashClosingBalance').textContent = formatINR(closingBalance);
     }
 
-    document.getElementById("btnAddLedger").addEventListener("click", async () => {
-      const name = document.getElementById("newLedgerName").value.trim();
-      if (!name) {
-        showToast("Enter a ledger name!");
-        return;
-      }
-      await addDoc(ledgersCol, { name });
-      document.getElementById("newLedgerName").value = "";
-      showToast("New ledger created.");
-    });
-
-    function renderLedgerMaster() {
-      const tbody = document.getElementById("ledgerMasterRows");
-      tbody.innerHTML = "";
-      ledgers.forEach(l => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><strong>${escapeHTML(l.name)}</strong></td>
-          <td style="font-family:monospace; font-size:0.7rem; color:#64748b;">${escapeHTML(l.id)}</td>
-          <td><button class="action-btn-sm btn-del-ledger" style="background:#ef4444; color:#fff;" data-id="${escapeHTML(l.id)}">Delete</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      tbody.querySelectorAll('.btn-del-ledger').forEach(btn => {
-        btn.addEventListener('click', () => deleteLedger(btn.getAttribute('data-id')));
-      });
+    // --- STAFF ADVANCE & SALARY TRACKING MODULE LOGIC ---
+    window.openAddStaffModal = function() {
+        document.getElementById('addStaffModal').style.display = 'flex';
+        document.getElementById('newStaffNameInput').focus();
     }
 
-    async function deleteLedger(id) {
-      if (confirm("Delete this ledger and sync to all devices?")) {
-        await deleteDoc(doc(db, "ledgers", id));
-        showToast("Ledger deleted.");
-      }
+    window.addNewStaffMember = function() {
+        const input = document.getElementById('newStaffNameInput');
+        const name = capitalizeFirstLetter(input.value.trim());
+        if (name && !staffLedgers[name]) {
+            staffLedgers[name] = [];
+            activeStaff = name;
+            saveToFirestoreImmediate();
+            renderStaffModule();
+            input.value = '';
+            document.getElementById('addStaffModal').style.display = 'none';
+            showToast(`Staff member "${name}" added.`);
+        } else {
+            showToast("Please enter a valid, unique staff name.");
+        }
     }
 
-    document.getElementById("tripDate").valueAsDate = new Date();
+    window.switchStaff = function(name) {
+        activeStaff = name;
+        renderStaffModule();
+    }
 
-    // Trigger fingerprint prompt immediately upon page loading
-    window.addEventListener("DOMContentLoaded", () => {
-      triggerBiometricUnlock();
-    });
-  </script>
+    window.renameActiveStaff = async function() {
+        if (!activeStaff || !staffLedgers[activeStaff]) {
+            showToast("No active staff selected.");
+            return;
+        }
+
+        const oldName = activeStaff;
+        const newName = prompt("Enter new staff name:", oldName);
+        if (newName === null) return;
+        
+        const trimmedName = capitalizeFirstLetter(newName.trim());
+        if (!trimmedName) {
+            showToast("Staff name cannot be empty.");
+            return;
+        }
+        if (trimmedName === oldName) return;
+        if (staffLedgers[trimmedName]) {
+            showToast("A staff member with this name already exists.");
+            return;
+        }
+
+        staffLedgers[trimmedName] = staffLedgers[oldName];
+        delete staffLedgers[oldName];
+        activeStaff = trimmedName;
+
+        try {
+            await setDoc(docRef, {
+                staffLedgers: {
+                    [oldName]: deleteField(),
+                    [trimmedName]: staffLedgers[trimmedName]
+                }
+            }, { merge: true });
+        } catch (error) {
+            console.error("Firestore staff rename error: ", error);
+        }
+
+        renderStaffModule();
+        showToast("Staff member renamed successfully.");
+    }
+
+    window.deleteActiveStaff = async function() {
+        if (!activeStaff || !staffLedgers[activeStaff]) {
+            showToast("No active staff selected.");
+            return;
+        }
+
+        const currentBal = calculateStaffBalance(activeStaff);
+        if (Math.abs(currentBal) > 0.001) {
+            showToast(`Cannot delete staff with an active advance balance of ${formatINR(currentBal)}.`);
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete staff member "${activeStaff}"?`)) {
+            const staffToDelete = activeStaff;
+            delete staffLedgers[staffToDelete];
+
+            try {
+                await setDoc(docRef, {
+                    staffLedgers: {
+                        [staffToDelete]: deleteField()
+                    }
+                }, { merge: true });
+            } catch (error) {
+                console.error("Firestore staff delete error: ", error);
+            }
+
+            const remainingStaff = Object.keys(staffLedgers);
+            activeStaff = remainingStaff.length > 0 ? remainingStaff[0] : '';
+            
+            renderStaffModule();
+            showToast("Staff member deleted.");
+        }
+    }
+
+    window.addStaffTransaction = function(e) {
+        e.preventDefault();
+        const date = document.getElementById('staffTxDate').value || getISODate();
+        const desc = capitalizeFirstLetter(document.getElementById('staffTxDesc').value.trim());
+        const amount = parseFloat(document.getElementById('staffTxAmount').value);
+        const type = document.getElementById('staffTxType').value;
+
+        if (!staffLedgers[activeStaff]) staffLedgers[activeStaff] = [];
+        
+        staffLedgers[activeStaff].push({ id: Date.now(), date, desc, amount, type });
+        saveToFirestoreImmediate();
+        
+        document.getElementById('staffTxDesc').value = '';
+        document.getElementById('staffTxAmount').value = '';
+        document.getElementById('staffTxDesc').focus();
+        document.getElementById('staffTxDate').value = getISODate();
+        
+        renderStaffModule();
+        showToast("Staff transaction added.");
+    }
+
+    window.editStaffTransaction = function(id) {
+        const entries = staffLedgers[activeStaff];
+        const item = entries.find(i => i.id === id);
+        if (!item) return;
+
+        const newDesc = prompt("Narration:", item.desc);
+        if (newDesc === null) return;
+
+        const newAmountStr = prompt("Amount (₹):", item.amount);
+        if (newAmountStr === null) return;
+
+        const newAmount = parseFloat(newAmountStr);
+        if (!isNaN(newAmount) && newDesc.trim() !== '') {
+            item.desc = capitalizeFirstLetter(newDesc.trim());
+            item.amount = newAmount;
+            saveToFirestoreImmediate();
+            renderStaffModule();
+            showToast("Staff entry updated.");
+        } else {
+            showToast("Invalid input provided.");
+        }
+    }
+
+    window.deleteStaffTransaction = function(id) {
+        if (confirm("Delete this staff entry?")) {
+            staffLedgers[activeStaff] = staffLedgers[activeStaff].filter(item => item.id !== id);
+            saveToFirestoreImmediate();
+            renderStaffModule();
+            showToast("Staff entry deleted.");
+        }
+    }
+
+    function calculateStaffBalance(name) {
+        let bal = 0;
+        (staffLedgers[name] || []).forEach(item => {
+            if (item.type === 'advance') bal += item.amount;
+            else bal -= item.amount;
+        });
+        return bal;
+    }
+
+    function renderStaffModule() {
+        const tabsContainer = document.getElementById('staffSelectorTabs');
+        tabsContainer.innerHTML = '';
+
+        const staffNames = Object.keys(staffLedgers);
+        if (staffNames.length > 0 && !staffLedgers[activeStaff]) {
+            activeStaff = staffNames[0];
+        }
+
+        staffNames.forEach(name => {
+            const bal = calculateStaffBalance(name);
+            const btn = document.createElement('button');
+            btn.className = `btn ${name === activeStaff ? 'btn-action' : ''}`;
+            btn.style.fontSize = '0.85rem';
+            btn.style.whiteSpace = 'nowrap';
+            btn.innerHTML = `${name} <span style="font-size:0.75rem; opacity:0.8;">(${formatINR(bal)})</span>`;
+            btn.onclick = () => switchStaff(name);
+            tabsContainer.appendChild(btn);
+        });
+
+        document.getElementById('activeStaffName').textContent = activeStaff || 'None';
+        
+        const currentStaffBal = activeStaff ? calculateStaffBalance(activeStaff) : 0;
+        document.getElementById('activeStaffBalance').textContent = formatINR(currentStaffBal);
+
+        const tbody = document.getElementById('staffTableBody');
+        const fragment = document.createDocumentFragment();
+        let entries = activeStaff ? (staffLedgers[activeStaff] || []) : [];
+
+        let runningBal = 0;
+        let processedEntries = entries.map(item => {
+            if (item.type === 'advance') runningBal += item.amount;
+            else runningBal -= item.amount;
+            return { ...item, balanceAfter: runningBal };
+        });
+
+        processedEntries.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${formatDateDisplay(item.date)}</td>
+                <td>${item.desc}</td>
+                <td style="color: ${item.type === 'advance' ? 'var(--danger)' : 'var(--success)'}; font-weight: bold;">
+                    ${item.type === 'advance' ? 'Advance Given' : 'Repayment'}
+                </td>
+                <td>${formatINR(item.amount)}</td>
+                <td><strong>${formatINR(item.balanceAfter)}</strong></td>
+                <td>
+                    <div class="actions-cell">
+                        <button class="btn btn-warning btn-icon" style="width: 28px; height: 28px;" onclick="editStaffTransaction(${item.id})" title="Edit">
+                            <svg viewBox="0 0 24 24" width="13" height="13"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        </button>
+                        <button class="btn btn-danger btn-icon" style="width: 28px; height: 28px;" onclick="deleteStaffTransaction(${item.id})" title="Delete">
+                            <svg viewBox="0 0 24 24" width="13" height="13"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        </button>
+                    </div>
+                </td>
+            `;
+            fragment.appendChild(tr);
+        });
+
+        tbody.innerHTML = '';
+        tbody.appendChild(fragment);
+
+        updateDashboardTotals();
+    }
+
+    function updateDashboardTotals() {
+        let totalStaffOutstanding = 0;
+        Object.keys(staffLedgers).forEach(name => {
+            totalStaffOutstanding += calculateStaffBalance(name);
+        });
+        
+        document.getElementById('dashTotalStaffEntry').textContent = formatINR(totalStaffOutstanding);
+        if (typeof calculateClosingBalance === 'function') {
+            calculateClosingBalance();
+        }
+    }
+
+    function updateDashboard() {
+        let totalOutstanding = 0;
+        Object.keys(ledgers).forEach(person => {
+            totalOutstanding += calculateAccountBalance(person);
+        });
+        document.getElementById('dashTotalOutstanding').textContent = formatINR(totalOutstanding);
+
+        renderStaffModule();
+    }
+    
+    window.saveCurrentDayHistory = function() {
+        const dateVal = getISODate();
+        const totalOut = document.getElementById('dashTotalOutstanding').textContent;
+        const staffHold = document.getElementById('dashTotalStaffEntry').textContent;
+        const dayCloseRaw = parseFloat(document.getElementById('dayClosingInput').value) || 0;
+        const shelfCashRaw = parseFloat(document.getElementById('cashInShelfInput').value) || 0;
+        const finalBal = document.getElementById('dashClosingBalance').textContent;
+
+        const dayClose = formatINR(dayCloseRaw);
+        const shelfCash = formatINR(shelfCashRaw);
+
+        let todayRecordIndex = dayHistory.findIndex(r => r.date === dateVal);
+        
+        const newRecord = {
+            id: todayRecordIndex !== -1 ? dayHistory[todayRecordIndex].id : Date.now(),
+            date: dateVal,
+            totalOut,
+            staffHold,
+            dayClose,
+            shelfCash,
+            finalBal
+        };
+
+        if (todayRecordIndex !== -1) {
+            dayHistory[todayRecordIndex] = newRecord;
+        } else {
+            dayHistory.unshift(newRecord);
+        }
+        
+        saveToFirestoreWithHistory();
+        showToast("Day history saved successfully.");
+        if (currentTab === 'history') renderDayHistory();
+    }
+
+    window.deleteHistoryRecord = function(id) {
+        if (confirm("Delete record?")) {
+            dayHistory = dayHistory.filter(rec => rec.id !== id);
+            saveToFirestoreWithHistory();
+            renderDayHistory();
+            showToast("History record deleted.");
+        }
+    }
+
+    function renderDayHistory() {
+        const container = document.getElementById('historyListContainer');
+        const fragment = document.createDocumentFragment();
+        
+        if (dayHistory.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.95rem;">No history available.</p>';
+            return;
+        }
+
+        dayHistory.forEach(record => {
+            const card = document.createElement('div');
+            card.className = 'history-card';
+            
+            card.innerHTML = `
+                <div class="history-card-header">
+                    <h3 style="margin: 0; font-size: 0.95rem; color: var(--text-main);">Date: ${formatDateDisplay(record.date)}</h3>
+                    <button class="btn btn-danger btn-icon" style="width: 28px; height: 28px;" onclick="deleteHistoryRecord(${record.id})" title="Delete">
+                        <svg viewBox="0 0 24 24" width="13" height="13"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    </button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 0.9rem; color: var(--secondary);">
+                    <div><strong>Outstanding:</strong> ${record.totalOut || '₹0.00'}</div>
+                    <div><strong>Staff Entry:</strong> ${record.staffHold || '₹0.00'}</div>
+                    <div><strong>Day Closing:</strong> ${record.dayClose || '₹0.00'}</div>
+                    <div><strong>Shelf Cash:</strong> ${record.shelfCash || '₹0.00'}</div>
+                    <div style="grid-column: span 4; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 1.05rem; color: var(--danger);">
+                        <strong>Closing Balance: ${record.finalBal || '₹0.00'}</strong>
+                    </div>
+                </div>
+            `;
+            fragment.appendChild(card);
+        });
+        container.innerHTML = '';
+        container.appendChild(fragment);
+    }
+
+    window.exportJSON = function() {
+        const fullBackup = { ledgers, dayHistory, staffLedgers };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullBackup, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `backup.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        showToast("Backup exported successfully.");
+    }
+
+    window.importJSON = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (imported.ledgers) {
+                    ledgers = imported.ledgers;
+                    if (imported.dayHistory) dayHistory = imported.dayHistory;
+                    if (imported.staffLedgers) staffLedgers = imported.staffLedgers;
+                    await saveToFirestoreWithHistory();
+                    showToast("Data restored successfully.");
+                }
+            } catch (err) { showToast("Invalid JSON backup file."); }
+        };
+        reader.readAsText(file);
+    }
+
+    window.sendWhatsAppStatement = function() {
+        const allEntries = ledgers[activeBorrower] || [];
+        const startDate = document.getElementById('filterStartDate').value;
+        const endDate = document.getElementById('filterEndDate').value;
+
+        let openingBalance = 0;
+        let filteredEntries = [];
+
+        allEntries.forEach(item => {
+            if (startDate && item.date < startDate) {
+                if (item.type === 'borrowed') openingBalance += item.amount;
+                else openingBalance -= item.amount;
+            } else if ((!startDate || item.date >= startDate) && (!endDate || item.date <= endDate)) {
+                filteredEntries.push(item);
+            }
+        });
+
+        let periodNet = 0;
+        filteredEntries.forEach(item => {
+            if (item.type === 'borrowed') periodNet += item.amount;
+            else periodNet -= item.amount;
+        });
+
+        const closingBalance = openingBalance + periodNet;
+        const padR = (str, len) => (str + ' '.repeat(len)).slice(0, len);
+        const padL = (str, len) => (' '.repeat(len) + str).slice(-len);
+
+        let message = `===============================\n`;
+        message += `       *SALES STATEMENT*      \n`;
+        message += `===============================\n\n`;
+        message += `*Customer:* ${activeBorrower}\n`;
+        
+        if (startDate || endDate) {
+            const fromStr = startDate ? formatDateDisplay(startDate) : 'Beginning';
+            const toStr = endDate ? formatDateDisplay(endDate) : 'To Date';
+            message += `*Period:* ${fromStr} to ${toStr}\n`;
+        }
+        
+        message += `\n*TRANSACTION DETAILS*\n`;
+        message += "```\n";
+        message += `${padR('DATE', 10)} | ${padR('DESC', 10)} | ${padL('AMOUNT', 9)}\n`;
+        message += `-----------+------------+----------\n`;
+
+        const openDateStr = startDate ? formatDateDisplay(startDate) : '-';
+        const openPrefix = openingBalance >= 0 ? '+' : '';
+        message += `${padR(openDateStr, 10)} | ${padR('OPEN BAL', 10)} | ${padL(openPrefix + openingBalance.toFixed(2), 9)}\n`;
+        message += `-----------+------------+----------\n`;
+
+        if (filteredEntries.length === 0) {
+            message += `${padR('', 10)} | ${padR('No trans.', 10)} | ${padL('-', 9)}\n`;
+        } else {
+            filteredEntries.forEach(item => {
+                const dateStr = padR(formatDateDisplay(item.date), 10);
+                const descStr = padR(item.desc.length > 10 ? item.desc.substring(0, 8) + '..' : item.desc, 10);
+                const prefix = item.type === 'borrowed' ? '+' : '-';
+                const amountStr = padL(prefix + item.amount.toFixed(2), 9);
+                message += `${dateStr} | ${descStr} | ${amountStr}\n`;
+            });
+        }
+
+        message += `-----------+------------+----------\n`;
+        const closeDateStr = endDate ? formatDateDisplay(endDate) : 'TODAY';
+        const closePrefix = closingBalance >= 0 ? '+' : '';
+        message += `${padR(closeDateStr, 10)} | ${padR('CLOSE BAL', 10)} | ${padL(closePrefix + closingBalance.toFixed(2), 9)}\n`;
+        message += "```\n\n";
+        message += `===============================\n`;
+        message += `_Thank you for your business._`;
+
+        const encodedMessage = encodeURIComponent(message);
+        window.open(`https://api.whatsapp.com/send?text=${encodedMessage}`, '_blank');
+    }
+</script>
+
 </body>
 </html>
