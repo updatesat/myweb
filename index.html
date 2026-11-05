@@ -58,7 +58,7 @@
             background-color: var(--bg);
             color: var(--text-main);
             font-size: 13px;
-            width: 100%;
+            width: 100vw;
             max-width: 100vw;
             overflow-x: hidden;
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -218,7 +218,7 @@
             position: fixed;
             bottom: 0;
             left: 0;
-            width: 100%;
+            width: 100vw;
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-top: 1px solid var(--border);
@@ -255,9 +255,9 @@
             background: rgba(16, 185, 129, 0.08);
         }
 
-        /* Workspace Container - Full Mobile Fit */
+        /* Workspace Container - Strict Mobile Fit */
         .container {
-            max-width: 100%;
+            max-width: 100vw;
             width: 100%;
             margin: 0 auto;
             background: var(--card-bg);
@@ -326,7 +326,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
             margin-bottom: 8px;
             padding-right: 2px;
@@ -457,14 +457,13 @@
         }
 
         form, #staffTransactionForm {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 8px;
             background: var(--bg);
             padding: 10px;
             border-radius: 10px;
             border: 1px solid var(--border);
-            align-items: end;
             width: 100%;
             max-width: 100%;
         }
@@ -474,14 +473,11 @@
             gap: 3px;
             width: 100%;
         }
-        .form-group:nth-child(2) {
-            grid-column: span 2;
-        }
         form button[type="submit"], 
         #staffTransactionForm button[type="submit"] {
-            grid-column: span 2;
             width: 100%;
             height: 38px;
+            margin-top: 4px;
         }
 
         input, select {
@@ -511,7 +507,7 @@
             width: 100%;
         }
         .filter-bar input[type="date"] {
-            width: 120px;
+            width: 110px;
             padding: 6px;
         }
         
@@ -527,20 +523,20 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 480px;
+            min-width: 440px;
         }
         th, td {
             padding: 8px 10px;
             border-bottom: 1px solid var(--border);
             text-align: left;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             color: var(--text-main);
         }
         th { 
             background-color: var(--bg); 
             font-weight: 700;
             color: var(--text-muted);
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 0.4px;
         }
@@ -735,23 +731,6 @@
             margin-bottom: 8px;
         }
 
-        @media (min-width: 600px) {
-            body { padding: 8px; padding-bottom: 76px; }
-            .container { padding: 12px; }
-            .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
-            .dash-card-closing { grid-column: span 2; }
-            .staff-info-bar { flex-direction: row; align-items: center; }
-            .staff-info-bar > div:last-child { width: auto; }
-            form, #staffTransactionForm { grid-template-columns: 1fr 2fr 1fr; }
-            form .form-group:nth-child(2), #staffTransactionForm .form-group:nth-child(2) { grid-column: span 1; }
-            form button[type="submit"], #staffTransactionForm button[type="submit"] { grid-column: span 1; width: auto; }
-        }
-
-        @media (min-width: 900px) {
-            .dashboard-grid { grid-template-columns: repeat(4, 1fr); }
-            .dash-card-closing { grid-column: span 4; }
-        }
-
         /* --- PRINT STYLES --- */
         #printStatementSheet {
             display: none;
@@ -912,7 +891,7 @@
                             <th>Type</th>
                             <th>Amount</th>
                             <th>Balance (₹)</th>
-                            <th style="width: 60px;">Action</th>
+                            <th style="width: 55px;">Action</th>
                         </tr>
                     </thead>
                     <tbody id="ledgerBody"></tbody>
@@ -1033,7 +1012,7 @@
                                 <th>Type</th>
                                 <th>Amount (₹)</th>
                                 <th>Balance (₹)</th>
-                                <th style="width: 60px;">Action</th>
+                                <th style="width: 55px;">Action</th>
                             </tr>
                         </thead>
                         <tbody id="staffTableBody"></tbody>
