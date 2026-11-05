@@ -1,11 +1,10 @@
-const CACHE_NAME = 'mujeeb-fleet-v1';
+const CACHE_NAME = 'daily-closing-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json'
+  './INDEX3.html',
+  './manifest.json'
 ];
 
-// Install Event - Caching basic app shell
+// Install Event - Caching basic assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -31,19 +30,20 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event - Network first for Firebase API, Cache first for static shell
+// Fetch Event - Network first, falling back to cache if offline
 self.addEventListener('fetch', (event) => {
+  // Skip Firebase or chrome-extension requests
   if (event.request.url.includes('firestore.googleapis.com') || event.request.url.includes('firebase')) {
-    // Let Firebase handle its own network requests/offline persistence
     return;
   }
-  
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request).catch(() => {
-        // Fallback if offline and asset not cached
-        return caches.match('/index.html');
-      });
-    })
+    fetch(event.request)
+      .then((response) => {
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
