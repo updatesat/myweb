@@ -1,6 +1,6 @@
 const CACHE_NAME = 'daily-closing-v1';
 const ASSETS_TO_CACHE = [
-  './INDEX3.html',
+  './index.html',
   './manifest.json'
 ];
 
@@ -32,7 +32,6 @@ self.addEventListener('activate', (event) => {
 
 // Fetch Event - Network first, falling back to cache if offline
 self.addEventListener('fetch', (event) => {
-  // Skip Firebase or chrome-extension requests
   if (event.request.url.includes('firestore.googleapis.com') || event.request.url.includes('firebase')) {
     return;
   }
