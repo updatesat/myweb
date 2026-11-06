@@ -9,35 +9,37 @@
 
     <style>
         :root {
-            --primary: #111111;
-            --primary-hover: #333333;
-            --secondary: #555555;
-            --success: #0b7a3e;
-            --warning: #b36b00;
-            --danger: #b30000;
-            --bg: #f4f4f4;
+            --primary: #0f172a;
+            --primary-hover: #1e293b;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
             --card-bg: #ffffff;
-            --border: #cccccc;
-            --text-main: #111111;
-            --text-muted: #555555;
-            --whatsapp: #0b7a3e;
-            --shadow: 0 4px 12px rgba(0,0,0,0.06);
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --whatsapp: #10b981;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="dark"] {
-            --primary: #e2e8f0;
-            --primary-hover: #cbd5e1;
+            --primary: #f8fafc;
+            --primary-hover: #e2e8f0;
             --secondary: #94a3b8;
-            --success: #22c55e;
+            --success: #34d399;
             --warning: #fbbf24;
             --danger: #f87171;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --border: #334155;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --whatsapp: #22c55e;
-            --shadow: 0 4px 12px rgba(0,0,0,0.25);
+            --bg: #090d16;
+            --card-bg: #111827;
+            --border: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --whatsapp: #34d399;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
         }
 
         *, *:before, *:after {
@@ -45,36 +47,36 @@
         }
 
         body, button, input, select, table, th, td, label, h1, h2, h3, p {
-            font-family: 'Times New Roman', Times, serif !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
             margin: 0;
-            padding: 8px;
-            padding-bottom: 70px; /* Space for bottom nav */
+            padding: 12px;
+            padding-bottom: 84px; /* Space for bottom nav */
             background-color: var(--bg);
             color: var(--text-main);
             font-size: 14px;
             width: 100vw;
             max-width: 100vw;
             overflow-x: hidden;
-            transition: background-color 0.2s ease, color 0.2s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .main-content, .bottom-nav {
-            animation: fadeIn 0.2s ease-out forwards;
+            animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         /* --- TOAST NOTIFICATIONS --- */
         #toastContainer {
             position: fixed;
-            bottom: 75px;
+            bottom: 85px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -82,90 +84,98 @@
             gap: 8px;
             z-index: 10000;
             pointer-events: none;
-            width: 92%;
+            width: 90%;
             max-width: 360px;
             align-items: center;
         }
         .toast {
             background: var(--primary);
             color: var(--bg);
-            padding: 10px 16px;
-            border-radius: 6px;
+            padding: 12px 18px;
+            border-radius: var(--radius);
             font-size: 0.9rem;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            font-weight: 500;
+            box-shadow: var(--shadow);
             opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.25s ease, transform 0.25s ease;
+            transform: translateY(12px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: auto;
             text-align: center;
             width: 100%;
         }
         .toast.show {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
         /* --- LOGIN PAGE --- */
         #homePageWrapper {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #111111;
+            background: var(--bg);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            padding: 12px;
+            padding: 16px;
         }
         .home-card {
             background: var(--card-bg);
-            padding: 28px 20px;
-            border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            padding: 32px 24px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
             text-align: center;
             width: 100%;
-            max-width: 360px; 
+            max-width: 380px; 
             border: 1px solid var(--border);
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .home-card h1 {
             margin-top: 0;
             color: var(--text-main);
-            font-size: 1.4rem;
-            margin-bottom: 4px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
         }
         .home-card p {
             color: var(--text-muted);
-            margin-bottom: 20px;
-            font-size: 0.9rem;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
         }
         .home-card input[type="email"],
         .home-card input[type="password"] {
             width: 100%;
-            padding: 10px 12px;
-            margin-bottom: 12px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: var(--radius);
             font-size: 16px;
-            background: var(--card-bg);
+            background: var(--bg);
             color: var(--text-main);
             outline: none;
+            transition: var(--transition);
         }
         .home-card input:focus { 
-            border-color: var(--primary); 
+            border-color: var(--success); 
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
         }
         
         .remember-row {
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            margin-bottom: 16px;
-            font-size: 0.85rem;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
             color: var(--secondary);
         }
         .remember-row input[type="checkbox"] {
-            margin-right: 6px;
-            width: 15px;
-            height: 15px;
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
+            accent-color: var(--success);
         }
         .remember-row label {
             cursor: pointer;
@@ -174,41 +184,45 @@
         
         .home-btn {
             width: 100%;
-            padding: 10px;
-            font-size: 0.95rem;
-            border-radius: 6px;
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: var(--radius);
             background: var(--primary);
             color: var(--bg);
             border: none;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .home-btn:hover {
-            opacity: 0.9;
+        .home-btn:active {
+            transform: scale(0.98);
         }
 
         .auth-error {
             color: var(--danger);
             font-size: 0.85rem;
-            margin-top: 8px;
+            margin-top: 10px;
             display: none;
+            font-weight: 500;
         }
 
         /* --- BOTTOM RIGHT ACTIONS --- */
         .bottom-right-actions {
             position: absolute;
-            bottom: 16px;
-            right: 16px;
+            bottom: 20px;
+            right: 20px;
             display: flex;
-            gap: 6px;
+            gap: 8px;
         }
         .bottom-right-actions .btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff !important;
-            padding: 6px 12px;
+            background: var(--card-bg);
+            color: var(--text-main) !important;
+            padding: 8px 14px;
             font-size: 0.85rem;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 6px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
         }
 
         /* --- BOTTOM NAVIGATION BAR --- */
@@ -222,31 +236,40 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             z-index: 1000;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            backdrop-filter: blur(12px);
+            background-color: var(--card-bg);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+            padding: 4px 6px;
         }
         .nav-tab-btn {
             background: transparent;
             border: none;
-            padding: 10px 4px;
+            padding: 8px 4px;
             color: var(--text-muted);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            font-weight: bold;
+            font-weight: 700;
+            letter-spacing: 0.5px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            transition: color 0.15s ease;
+            gap: 4px;
+            border-radius: var(--radius);
+            transition: var(--transition);
         }
         .nav-tab-btn svg {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             fill: currentColor;
+            transition: var(--transition);
         }
         .nav-tab-btn.active {
-            color: var(--text-main);
-            background: var(--border);
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .nav-tab-btn.active svg {
+            transform: translateY(-1px);
         }
 
         /* Workspace Container - Strict Mobile Fit */
@@ -255,8 +278,8 @@
             width: 100%;
             margin: 0 auto;
             background: var(--card-bg);
-            padding: 10px;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
             position: relative;
             box-shadow: var(--shadow);
@@ -264,9 +287,9 @@
         }
 
         .app-title-box {
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 10px;
-            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -274,86 +297,102 @@
         .app-title-box h1 {
             color: var(--text-main);
             margin: 0;
-            font-size: 1.05rem;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
         }
         
         .header-actions {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
         }
 
         .layout-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             align-items: stretch;
         }
 
+        /* --- REDESIGNED LEDGER ACCOUNTS IN LIST VIEW --- */
         .borrower-selector-container {
             background: var(--card-bg);
-            padding: 10px;
-            border-radius: 6px;
+            padding: 14px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
-            margin-bottom: 10px;
+            margin-bottom: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
         .borrower-selector-container h3 {
             margin-top: 0;
             color: var(--text-muted);
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            margin-bottom: 6px;
-            letter-spacing: 0.4px;
+            margin-bottom: 10px;
+            letter-spacing: 0.8px;
+            font-weight: 700;
         }
+        
+        /* VERTICAL LIST VIEW CONTAINER */
         .borrower-selector {
             display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            margin-bottom: 8px;
-            padding-bottom: 4px;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+            max-height: 280px;
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            padding-right: 2px;
         }
 
         .btn-tab {
-            background-color: transparent;
+            background-color: var(--bg);
             color: var(--text-main);
-            padding: 8px 12px;
+            padding: 12px 14px;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-            flex-shrink: 0;
+            justify-content: space-between;
+            width: 100%;
+            text-align: left;
+            transition: var(--transition);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
         .btn-tab:hover { 
-            background-color: var(--border); 
+            border-color: var(--secondary);
+            background: var(--card-bg);
         }
         .btn-tab.active {
-            background-color: var(--primary);
+            background: var(--primary);
             color: var(--bg);
             border-color: var(--primary);
-            font-weight: bold;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .btn-tab.active .account-bal {
             color: var(--bg);
+            opacity: 0.9;
         }
         .account-bal {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            font-weight: 600;
             color: var(--danger);
             text-align: right;
             white-space: nowrap;
         }
+        .btn-tab.active .account-bal {
+            color: #fff;
+        }
 
         .sidebar-totals-box {
-            background: var(--card-bg);
+            background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 8px 10px;
+            border-radius: 10px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -362,60 +401,69 @@
             font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
         .sidebar-totals-box .value {
-            font-size: 1.05rem;
-            font-weight: bold;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: var(--danger);
         }
         
         .main-content {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             min-width: 0;
         }
 
         .btn {
-            padding: 7px 12px;
+            padding: 9px 14px;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: var(--radius);
             cursor: pointer;
             font-size: 0.9rem;
+            font-weight: 500;
             background: var(--card-bg);
             color: var(--text-main);
-            transition: opacity 0.15s ease;
-        }
-        .btn:active { opacity: 0.7; transform: scale(0.98); }
-        
-        .btn-action { background-color: var(--primary); color: var(--bg); border-color: var(--primary); }
-        .btn-action:hover { opacity: 0.9; }
-        
-        .btn-warning { background-color: var(--card-bg); color: var(--warning); border-color: var(--warning); }
-        .btn-danger { background-color: var(--card-bg); color: var(--danger); border-color: var(--danger); }
-        .btn-success { background-color: var(--success); color: #fff; border-color: var(--success); }
-        .btn-whatsapp { background-color: var(--card-bg); color: var(--whatsapp); border-color: var(--whatsapp); }
-
-        .btn-icon {
-            width: 32px;
-            height: 32px;
-            padding: 0;
+            transition: var(--transition);
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
+        }
+        .btn:active { transform: scale(0.97); }
+        
+        .btn-action { background-color: var(--success); color: #fff; border-color: var(--success); font-weight: 600; }
+        .btn-action:hover { opacity: 0.95; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
+        
+        .btn-warning { background-color: transparent; color: var(--warning); border-color: var(--border); }
+        .btn-warning:hover { background: rgba(245, 158, 11, 0.08); border-color: var(--warning); }
+        
+        .btn-danger { background-color: transparent; color: var(--danger); border-color: var(--border); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.08); border-color: var(--danger); }
+        
+        .btn-success { background-color: var(--success); color: #fff; border-color: var(--success); }
+        .btn-whatsapp { background-color: rgba(16, 185, 129, 0.1); color: var(--whatsapp); border-color: rgba(16, 185, 129, 0.3); }
+        .btn-whatsapp:hover { background: rgba(16, 185, 129, 0.2); }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
             flex-shrink: 0;
-            border-radius: 6px;
+            border-radius: 10px;
         }
         .btn-icon svg {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             fill: currentColor;
         }
         
         .summary-card {
-            background: var(--card-bg);
-            padding: 10px 12px;
-            border-radius: 6px;
+            background: var(--bg);
+            padding: 12px 16px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -423,75 +471,82 @@
             font-size: 0.9rem;
             gap: 8px;
             flex-wrap: wrap;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
         .summary-card span {
-            font-size: 1.05rem;
-            font-weight: bold;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: var(--text-main);
         }
 
         #activeBorrowerName {
             cursor: pointer;
             text-decoration: underline dotted;
-            text-underline-offset: 3px;
+            text-underline-offset: 4px;
+            color: var(--success);
+            font-weight: 700;
         }
         #activeBorrowerName:hover {
-            opacity: 0.7;
+            opacity: 0.8;
         }
 
         form, #staffTransactionForm {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
-            gap: 8px;
+            gap: 10px;
             background: var(--card-bg);
-            padding: 10px;
-            border-radius: 6px;
+            padding: 14px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
             align-items: end;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 4px;
         }
         input, select {
-            padding: 8px 10px;
+            padding: 10px 12px;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 10px;
             width: 100%;
             font-size: 16px; /* Prevents auto-zoom on mobile */
-            background: var(--card-bg);
+            background: var(--bg);
             outline: none;
             color: var(--text-main);
+            transition: var(--transition);
         }
         input:focus, select:focus { 
-            border-color: var(--primary);
+            border-color: var(--success);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
         }
 
         .filter-bar {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
             background: var(--card-bg);
-            padding: 10px 12px;
-            border-radius: 6px;
+            padding: 12px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
             flex-wrap: wrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
         .filter-bar input[type="date"] {
-            width: 130px;
-            padding: 6px;
+            width: 135px;
+            padding: 8px;
         }
         
         .table-container {
             background: var(--card-bg);
-            border-radius: 6px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             max-width: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
         table {
             width: 100%;
@@ -499,201 +554,208 @@
             min-width: 520px;
         }
         th, td {
-            padding: 8px 10px;
+            padding: 10px 12px;
             border-bottom: 1px solid var(--border);
             text-align: left;
             font-size: 0.85rem;
             color: var(--text-main);
         }
         th { 
-            background-color: var(--card-bg); 
-            font-weight: bold;
+            background-color: var(--bg); 
+            font-weight: 700;
             color: var(--text-muted);
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.6px;
         }
         tbody tr:hover {
-            background-color: var(--border);
+            background-color: var(--bg);
         }
-        .type-borrowed { color: var(--danger); font-weight: bold; }
-        .type-returned { color: var(--success); font-weight: bold; }
-        .actions-cell { display: flex; gap: 4px; }
+        .type-borrowed { color: var(--danger); font-weight: 600; }
+        .type-returned { color: var(--success); font-weight: 600; }
+        .actions-cell { display: flex; gap: 6px; }
         
         .toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
+            margin-top: 4px;
         }
-        .toolbar-left { display: flex; gap: 6px; align-items: center; }
+        .toolbar-left { display: flex; gap: 8px; align-items: center; }
         
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            padding: 12px;
-            backdrop-filter: blur(2px);
+            padding: 16px;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease;
         }
         .modal-content {
             background: var(--card-bg);
-            padding: 18px 14px;
-            border-radius: 8px;
+            padding: 22px 18px;
+            border-radius: 16px;
             width: 100%;
-            max-width: 340px;
+            max-width: 360px;
             border: 1px solid var(--border);
             color: var(--text-main);
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            animation: fadeIn 0.15s ease-out forwards;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .modal-content h3 {
             margin-top: 0;
-            font-size: 1.05rem;
+            font-size: 1.15rem;
+            font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 10px;
+            margin-bottom: 14px;
         }
         .modal-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 6px;
-            margin-top: 12px;
+            gap: 8px;
+            margin-top: 16px;
         }
 
         .denom-grid {
             display: grid;
-            grid-template-columns: 50px 1fr 90px;
-            gap: 6px;
+            grid-template-columns: 50px 1fr 95px;
+            gap: 8px;
             align-items: center;
-            margin-top: 4px;
+            margin-top: 6px;
         }
         .denom-grid input {
-            padding: 6px;
+            padding: 8px;
         }
-        .denom-total { text-align: right; font-weight: bold; font-size: 0.85rem; }
+        .denom-total { text-align: right; font-weight: 600; font-size: 0.9rem; }
 
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 12px;
+            margin-bottom: 4px;
         }
         .dash-card {
             background: var(--card-bg);
-            padding: 10px 12px;
-            border-radius: 6px;
+            padding: 12px 14px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
-            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: var(--transition);
+        }
+        .dash-card:hover {
+            border-color: var(--secondary);
         }
         .dash-card label {
             display: block;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
+            font-weight: 700;
         }
         .dash-card .value {
-            font-size: 1.05rem;
-            font-weight: bold;
+            font-size: 1.15rem;
+            font-weight: 700;
             color: var(--text-main);
         }
         .dash-card-closing {
             background: var(--card-bg);
-            border-color: var(--primary);
+            border-color: var(--success);
             grid-column: span 4;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, transparent 100%);
         }
-        .cash-input-group { display: flex; gap: 6px; }
+        .cash-input-group { display: flex; gap: 8px; }
 
-        /* --- PERFECTED STAFF ADVANCE SECTION --- */
+        /* --- STAFF ADVANCE SECTION --- */
         .staff-section {
             background: var(--card-bg);
-            padding: 12px;
-            border-radius: 6px;
+            padding: 14px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
-            margin-bottom: 12px;
+            margin-bottom: 4px;
             width: 100%;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
-        }
-
-        .staff-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
         #staffSelectorTabs {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            max-height: 110px;
+            gap: 8px;
+            max-height: 120px;
             overflow-y: auto;
             overflow-x: hidden;
-            margin-bottom: 10px;
-            padding: 2px 0 4px 0;
+            margin-bottom: 12px;
+            padding: 2px 0;
             -webkit-overflow-scrolling: touch;
         }
 
         #staffSelectorTabs .staff-tab-pill {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 5px 10px;
-            background: var(--card-bg);
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            font-size: 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.15s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            transition: var(--transition);
+            font-weight: 500;
         }
         #staffSelectorTabs .staff-tab-pill:hover {
-            border-color: var(--primary);
+            border-color: var(--success);
         }
         #staffSelectorTabs .staff-tab-pill.active {
-            background: var(--primary);
-            color: var(--bg);
-            border-color: var(--primary);
-            font-weight: bold;
+            background: var(--success);
+            color: #fff;
+            border-color: var(--success);
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
         }
 
         .staff-info-bar {
             background: var(--bg);
-            padding: 8px 10px;
-            border-radius: 6px;
+            padding: 10px 14px;
+            border-radius: 10px;
             border: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            font-size: 0.8rem;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
         }
 
         .history-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: var(--transition);
+        }
+        .history-card:hover {
+            border-color: var(--secondary);
         }
         .history-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 6px;
-            margin-bottom: 8px;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         /* --- MOBILE MEDIA QUERIES --- */
@@ -723,12 +785,12 @@
 
         @media (max-width: 600px) {
             body {
-                padding: 4px;
-                padding-bottom: 70px;
+                padding: 6px;
+                padding-bottom: 80px;
             }
             .container {
-                padding: 8px;
-                border-radius: 6px;
+                padding: 12px;
+                border-radius: 10px;
             }
             .dashboard-grid {
                 grid-template-columns: 1fr;
@@ -819,15 +881,15 @@
 <div id="homePageWrapper">
     <div class="home-card">
         <h1>Daily Closing</h1>
-        <p>Admin Login</p>
+        <p>Professional Admin Login</p>
         
         <form onsubmit="loginApp(event)" style="background: transparent; border: none; padding: 0; display: block; box-shadow: none;">
-            <input type="email" id="authEmailInput" placeholder="Email" required>
+            <input type="email" id="authEmailInput" placeholder="Email Address" required>
             <input type="password" id="authPasswordInput" placeholder="Password" required>
             
             <div class="remember-row">
                 <input type="checkbox" id="rememberMe">
-                <label for="rememberMe">Remember</label>
+                <label for="rememberMe">Remember Session</label>
             </div>
 
             <button type="submit" class="home-btn">Sign In</button>
@@ -848,19 +910,20 @@
     <div class="app-title-box">
         <h1>Daily Closing System</h1>
         <div class="header-actions">
-            <button class="btn" onclick="toggleTheme()" id="themeToggleBtn" title="Toggle Dark/Light Mode">🌙</button>
-            <button class="btn btn-danger" style="font-size: 0.8rem; padding: 5px 10px;" onclick="logoutApp()">Sign Out</button>
+            <button class="btn btn-icon" onclick="toggleTheme()" id="themeToggleBtn" title="Toggle Dark/Light Mode">🌙</button>
+            <button class="btn btn-danger" style="font-size: 0.8rem; padding: 6px 12px;" onclick="logoutApp()">Sign Out</button>
         </div>
     </div>
 
     <div class="layout-wrapper">
         <main class="main-content" id="ledgerView" style="display: none;">
             <div class="borrower-selector-container">
-                <h3>Accounts</h3>
+                <h3>Ledger Accounts (List View)</h3>
+                <!-- Redesigned Vertical List View for Ledger Accounts -->
                 <div class="borrower-selector" id="borrowerList"></div>
-                <button class="btn btn-action" style="width: 100%; margin-top: 4px; font-size: 0.85rem;" onclick="openAddAccountModal()">+ Add Account</button>
-                <div class="sidebar-totals-box" style="margin-top: 8px;">
-                    <label>Total Balance</label>
+                <button class="btn btn-action" style="width: 100%; margin-top: 6px;" onclick="openAddAccountModal()">+ Add New Account</button>
+                <div class="sidebar-totals-box" style="margin-top: 10px;">
+                    <label>Total Combined Balance</label>
                     <div class="value" id="sidebarGrandTotal">₹0.00</div>
                 </div>
             </div>
@@ -875,7 +938,7 @@
                     <input type="date" id="txDate" required>
                 </div>
                 <div class="form-group">
-                    <input type="text" id="txDesc" placeholder="Description" required>
+                    <input type="text" id="txDesc" placeholder="Description / Narration" required>
                 </div>
                 <div class="form-group">
                     <input type="number" id="txAmount" placeholder="Amount" step="0.01" min="0.01" required>
@@ -886,16 +949,16 @@
                         <option value="returned">Received</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-action" style="height: 38px;">Add Entry</button>
+                <button type="submit" class="btn btn-action" style="height: 42px;">Add Entry</button>
             </form>
 
             <div class="filter-bar">
                 <input type="date" id="filterStartDate">
                 <span>to</span>
                 <input type="date" id="filterEndDate">
-                <button class="btn btn-action" style="padding: 6px 12px;" onclick="renderLedger()">Filter</button>
-                <button class="btn btn-warning" style="padding: 6px 12px;" onclick="clearFilters()">Reset</button>
-                <button class="btn btn-success" id="toggleOpeningBalBtn" style="padding: 6px 12px;" onclick="toggleOpeningBalanceView()">Opening Bal: ON</button>
+                <button class="btn btn-action" style="padding: 8px 14px;" onclick="renderLedger()">Filter</button>
+                <button class="btn btn-warning" style="padding: 8px 14px;" onclick="clearFilters()">Reset</button>
+                <button class="btn btn-success" id="toggleOpeningBalBtn" style="padding: 8px 14px;" onclick="toggleOpeningBalanceView()">Opening Bal: ON</button>
             </div>
 
             <div class="table-container">
@@ -907,7 +970,7 @@
                             <th>Type</th>
                             <th>Amount</th>
                             <th>Balance (₹)</th>
-                            <th style="width: 70px;">Action</th>
+                            <th style="width: 80px;">Action</th>
                         </tr>
                     </thead>
                     <tbody id="ledgerBody"></tbody>
@@ -923,7 +986,7 @@
                         <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                     </button>
                 </div>
-                <button class="btn btn-danger" style="font-size: 0.8rem; padding: 6px 12px;" onclick="deleteCurrentAccount()">Delete Account</button>
+                <button class="btn btn-danger" style="font-size: 0.85rem; padding: 8px 14px;" onclick="deleteCurrentAccount()">Delete Account</button>
             </div>
         </main>
 
@@ -946,15 +1009,15 @@
                 </div>
                 <div class="dash-card">
                     <label>SBI</label>
-                    <input type="number" id="sbiInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                    <input type="number" id="sbiInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: 600;">
                 </div>
                 <div class="dash-card">
                     <label>Phone Pe</label>
-                    <input type="number" id="phonePeInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                    <input type="number" id="phonePeInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: 600;">
                 </div>
                 <div class="dash-card">
                     <label>Owners Holdings</label>
-                    <input type="number" id="ownersHoldingsInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                    <input type="number" id="ownersHoldingsInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: 600;">
                 </div>
                 <div class="dash-card">
                     <label>Combined Outstanding</label>
@@ -962,18 +1025,18 @@
                 </div>
                 <div class="dash-card">
                     <label>Day Closing</label>
-                    <input type="number" id="dayClosingInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                    <input type="number" id="dayClosingInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: 600;">
                 </div>
                 <div class="dash-card">
                     <label>Cash in Shelf</label>
                     <div class="cash-input-group">
-                        <input type="number" id="cashInShelfInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: bold;">
+                        <input type="number" id="cashInShelfInput" placeholder="0.00" step="0.01" min="0" oninput="calculateClosingBalance()" style="font-weight: 600;">
                         <button class="btn btn-warning" onclick="openDenomModal()">Denom</button>
                     </div>
                 </div>
                 <div class="dash-card dash-card-closing">
                     <label>Closing Balance</label>
-                    <div class="value" id="dashClosingBalance">₹0.00</div>
+                    <div class="value" id="dashClosingBalance" style="color: var(--success);">₹0.00</div>
                 </div>
             </div>
         </main>
@@ -982,7 +1045,7 @@
         <main class="main-content" id="staffView" style="display: none;">
             <div class="summary-card">
                 <div>Staff Advance & Salary Tracking</div>
-                <button class="btn btn-action" style="font-size: 0.8rem; padding: 5px 10px;" onclick="openAddStaffModal()">+ Add Staff</button>
+                <button class="btn btn-action" style="font-size: 0.85rem; padding: 6px 12px;" onclick="openAddStaffModal()">+ Add Staff</button>
             </div>
 
             <!-- Staff Floating Pills -->
@@ -994,13 +1057,13 @@
                         Active: <strong id="activeStaffName" style="color: var(--text-main);">None</strong> | 
                         Bal: <strong id="activeStaffBalance" style="color: var(--danger);">₹0.00</strong>
                     </div>
-                    <div style="display: flex; gap: 4px;">
-                        <button class="btn btn-warning" style="font-size: 0.7rem; padding: 3px 8px;" onclick="renameActiveStaff()">Rename</button>
-                        <button class="btn btn-danger" style="font-size: 0.7rem; padding: 3px 8px;" onclick="deleteActiveStaff()">Delete</button>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn btn-warning" style="font-size: 0.75rem; padding: 4px 10px;" onclick="renameActiveStaff()">Rename</button>
+                        <button class="btn btn-danger" style="font-size: 0.75rem; padding: 4px 10px;" onclick="deleteActiveStaff()">Delete</button>
                     </div>
                 </div>
 
-                <form id="staffTransactionForm" onsubmit="addStaffTransaction(event)" style="box-shadow: none; margin-bottom: 10px;">
+                <form id="staffTransactionForm" onsubmit="addStaffTransaction(event)" style="box-shadow: none; margin-bottom: 12px;">
                     <div class="form-group">
                         <input type="date" id="staffTxDate" required>
                     </div>
@@ -1016,7 +1079,7 @@
                             <option value="repayment">Repayment/Salary Ded.</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-action" style="height: 38px;">Add Entry</button>
+                    <button type="submit" class="btn btn-action" style="height: 42px;">Add Entry</button>
                 </form>
 
                 <div class="table-container">
@@ -1028,7 +1091,7 @@
                                 <th>Type</th>
                                 <th>Amount (₹)</th>
                                 <th>Balance (₹)</th>
-                                <th style="width: 70px;">Action</th>
+                                <th style="width: 80px;">Action</th>
                             </tr>
                         </thead>
                         <tbody id="staffTableBody"></tbody>
@@ -1100,7 +1163,7 @@
         <input type="text" id="newBorrowerName" placeholder="Account Name" required>
         <div class="modal-actions">
             <button class="btn btn-warning" onclick="document.getElementById('addBorrowerModal').style.display = 'none'">Cancel</button>
-            <button class="btn btn-success" onclick="addNewBorrower()">Save</button>
+            <button class="btn btn-success" onclick="addNewBorrower()">Save Account</button>
         </div>
     </div>
 </div>
@@ -1112,13 +1175,13 @@
         <input type="text" id="newStaffNameInput" placeholder="Staff Name" required>
         <div class="modal-actions">
             <button class="btn btn-warning" onclick="document.getElementById('addStaffModal').style.display = 'none'">Cancel</button>
-            <button class="btn btn-success" onclick="addNewStaffMember()">Save</button>
+            <button class="btn btn-success" onclick="addNewStaffMember()">Save Staff</button>
         </div>
     </div>
 </div>
 
 <div id="denomModal" class="modal">
-    <div class="modal-content" style="width: 340px;">
+    <div class="modal-content" style="width: 360px;">
         <h3>Denomination Calculator</h3>
         <div class="denom-grid">
             <label>₹500</label><input type="number" class="denom-count" data-denom="500" min="0" placeholder="0" oninput="updateDenomCalc()"><div class="denom-total" id="denom-total-500">₹0.00</div>
@@ -1128,12 +1191,12 @@
             <label>₹20</label><input type="number" class="denom-count" data-denom="20" min="0" placeholder="0" oninput="updateDenomCalc()"><div class="denom-total" id="denom-total-20">₹0.00</div>
             <label>₹10</label><input type="number" class="denom-count" data-denom="10" min="0" placeholder="0" oninput="updateDenomCalc()"><div class="denom-total" id="denom-total-10">₹0.00</div>
             
-            <div style="grid-column: span 2; text-align: right; font-weight: bold; margin-top: 4px;">TOTAL:</div>
-            <div class="denom-total" id="denom-grand-total" style="color: var(--danger); margin-top: 4px;">₹0.00</div>
+            <div style="grid-column: span 2; text-align: right; font-weight: 700; margin-top: 6px;">TOTAL:</div>
+            <div class="denom-total" id="denom-grand-total" style="color: var(--success); margin-top: 6px;">₹0.00</div>
         </div>
-        <div class="modal-actions" style="border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px;">
+        <div class="modal-actions" style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 14px;">
             <button class="btn btn-warning" onclick="document.getElementById('denomModal').style.display = 'none'">Cancel</button>
-            <button class="btn btn-success" onclick="applyDenomination()">Apply</button>
+            <button class="btn btn-success" onclick="applyDenomination()">Apply Total</button>
         </div>
     </div>
 </div>
@@ -1180,7 +1243,7 @@
         setTimeout(() => toast.classList.add('show'), 50);
         setTimeout(() => {
             toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 250);
+            setTimeout(() => toast.remove(), 300);
         }, 2200);
     }
 
@@ -1407,6 +1470,7 @@
             
             const nameSpan = document.createElement('span');
             nameSpan.textContent = name;
+            nameSpan.style.fontWeight = '600';
 
             const balSpan = document.createElement('span');
             balSpan.className = 'account-bal';
@@ -1599,7 +1663,7 @@
 
         if (showOpeningBalance) {
             const tr = document.createElement('tr');
-            tr.style.backgroundColor = 'var(--border)';
+            tr.style.backgroundColor = 'var(--bg)';
             tr.innerHTML = `
                 <td>${startDate ? formatDateDisplay(startDate) : '-'}</td>
                 <td><strong>Opening Balance</strong></td>
@@ -1620,10 +1684,10 @@
                 <td>${formatINR(item.amount)}</td>
                 <td><strong>${formatINR(item.balanceAfter)}</strong></td>
                 <td class="actions-cell">
-                    <button class="btn btn-warning btn-icon" style="width: 26px; height: 26px;" onclick="editTransaction(${item.id})" title="Edit">
+                    <button class="btn btn-warning btn-icon" style="width: 28px; height: 28px;" onclick="editTransaction(${item.id})" title="Edit">
                         <svg viewBox="0 0 24 24" width="12" height="12"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                     </button>
-                    <button class="btn btn-danger btn-icon" style="width: 26px; height: 26px;" onclick="deleteTransaction(${item.id})" title="Delete">
+                    <button class="btn btn-danger btn-icon" style="width: 28px; height: 28px;" onclick="deleteTransaction(${item.id})" title="Delete">
                         <svg viewBox="0 0 24 24" width="12" height="12"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                     </button>
                 </td>
@@ -1998,7 +2062,7 @@
             const bal = calculateStaffBalance(name);
             const pill = document.createElement('div');
             pill.className = `staff-tab-pill ${name === activeStaff ? 'active' : ''}`;
-            pill.innerHTML = `<span>${name}</span> <span style="font-size:0.7rem; opacity:0.8;">(${formatINR(bal)})</span>`;
+            pill.innerHTML = `<span>${name}</span> <span style="font-size:0.75rem; opacity:0.85;">(${formatINR(bal)})</span>`;
             pill.onclick = () => switchStaff(name);
             tabsContainer.appendChild(pill);
         });
@@ -2024,17 +2088,17 @@
             tr.innerHTML = `
                 <td>${formatDateDisplay(item.date)}</td>
                 <td>${item.desc}</td>
-                <td style="color: ${item.type === 'advance' ? 'var(--danger)' : 'var(--success)'}; font-weight: bold;">
+                <td style="color: ${item.type === 'advance' ? 'var(--danger)' : 'var(--success)'}; font-weight: 600;">
                     ${item.type === 'advance' ? 'Advance Given' : 'Repayment'}
                 </td>
                 <td>${formatINR(item.amount)}</td>
                 <td><strong>${formatINR(item.balanceAfter)}</strong></td>
                 <td>
                     <div class="actions-cell">
-                        <button class="btn btn-warning btn-icon" style="width: 26px; height: 26px;" onclick="editStaffTransaction(${item.id})" title="Edit">
+                        <button class="btn btn-warning btn-icon" style="width: 28px; height: 28px;" onclick="editStaffTransaction(${item.id})" title="Edit">
                             <svg viewBox="0 0 24 24" width="12" height="12"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                         </button>
-                        <button class="btn btn-danger btn-icon" style="width: 26px; height: 26px;" onclick="deleteStaffTransaction(${item.id})" title="Delete">
+                        <button class="btn btn-danger btn-icon" style="width: 28px; height: 28px;" onclick="deleteStaffTransaction(${item.id})" title="Delete">
                             <svg viewBox="0 0 24 24" width="12" height="12"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                         </button>
                     </div>
@@ -2129,8 +2193,8 @@
             
             card.innerHTML = `
                 <div class="history-card-header">
-                    <h3 style="margin: 0; font-size: 0.9rem; color: var(--text-main);">Date: ${formatDateDisplay(record.date)}</h3>
-                    <button class="btn btn-danger btn-icon" style="width: 26px; height: 26px;" onclick="deleteHistoryRecord(${record.id})" title="Delete">
+                    <h3 style="margin: 0; font-size: 0.95rem; color: var(--text-main); font-weight: 600;">Date: ${formatDateDisplay(record.date)}</h3>
+                    <button class="btn btn-danger btn-icon" style="width: 28px; height: 28px;" onclick="deleteHistoryRecord(${record.id})" title="Delete">
                         <svg viewBox="0 0 24 24" width="12" height="12"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                     </button>
                 </div>
@@ -2139,7 +2203,7 @@
                     <div><strong>Staff Entry:</strong> ${record.staffHold || '₹0.00'}</div>
                     <div><strong>Day Closing:</strong> ${record.dayClose || '₹0.00'}</div>
                     <div><strong>Shelf Cash:</strong> ${record.shelfCash || '₹0.00'}</div>
-                    <div style="grid-column: span 4; margin-top: 2px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 0.95rem; color: var(--danger);">
+                    <div style="grid-column: span 4; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 1rem; color: var(--success);">
                         <strong>Closing Balance: ${record.finalBal || '₹0.00'}</strong>
                     </div>
                 </div>
